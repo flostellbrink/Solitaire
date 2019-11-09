@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Solitaire.Game;
 
@@ -15,10 +16,18 @@ namespace Solitaire
         {
             var random = new Random();
             var board = new Board();
+            var knownBoards = new HashSet<int>();
 
             while (true)
             {
-                Console.WriteLine("Board:");
+                if (!knownBoards.Add(board.GetHashCode()))
+                {
+                    Console.WriteLine("Already known board state");
+                    break;
+
+                }
+
+                Console.WriteLine($"Board ({board.GetHashCode()}):");
                 Console.WriteLine(board);
 
                 var moves = board.AllMoves.ToList();
@@ -29,8 +38,6 @@ namespace Solitaire
                 Console.WriteLine();
 
                 selectedMove.Apply(board);
-
-                Console.ReadKey();
             }
         }
     }

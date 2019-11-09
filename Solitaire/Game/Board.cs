@@ -20,21 +20,21 @@ namespace Solitaire.Game
             var stackIndex = 0;
             foreach (var card in deck)
             {
-                _stacks[stackIndex++ % _stacks.Count].Cards.Add(card);
+                _stacks.ElementAt(stackIndex++ % _stacks.Count).Cards.Add(card);
             }
 
             ApplyForcedMove();
         }
 
-        private readonly List<LockableStack> _lockableStacks =
+        private readonly ICollection<LockableStack> _lockableStacks =
             Card.BaseColors.Select(index => new LockableStack((int)index)).ToList();
 
         private readonly FlowerStack _flowerStack = new FlowerStack();
 
-        private readonly List<FilingStack> _filingStacks =
+        private readonly ICollection<FilingStack> _filingStacks =
             Card.BaseColors.Select(color => new FilingStack(color)).ToList();
 
-        private readonly List<Stack> _stacks =
+        private readonly ICollection<Stack> _stacks =
             Enumerable.Range(0, StackCount).Select(index => new Stack(index)).ToList();
 
         public IEnumerable<IStack> AllStacks => Enumerable.Empty<IStack>()
@@ -98,6 +98,18 @@ namespace Solitaire.Game
             }
 
             return builder.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (_lockableStacks != null ? _lockableStacks.GetCollectionHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_flowerStack != null ? _flowerStack.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_filingStacks != null ? _filingStacks.GetCollectionHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_stacks != null ? _stacks.GetCollectionHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }

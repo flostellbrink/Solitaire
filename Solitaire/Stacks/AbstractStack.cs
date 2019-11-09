@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Solitaire.Game;
@@ -7,7 +8,7 @@ namespace Solitaire.Stacks
 {
     internal abstract class AbstractStack : IStack
     {
-        internal ICollection<Card> Cards = new List<Card>();
+        internal readonly ICollection<Card> Cards = new List<Card>();
 
         public abstract IEnumerable<Unit> MovableCards { get; }
 
@@ -29,6 +30,11 @@ namespace Solitaire.Stacks
             {
                 Cards.Remove(card);
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return (Cards != null ? Cards.GetCollectionHashCode() : 0);
         }
     }
 }

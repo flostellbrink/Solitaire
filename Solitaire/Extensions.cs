@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,6 +33,15 @@ namespace Solitaire
             IEnumerable<T> values)
         {
             builder.Append(string.Join(separator, values.Select(item => (item?.ToString() ?? string.Empty).PadRightAnsi(totalWidth))));
+        }
+
+        public static int GetCollectionHashCode<T>(this ICollection<T> collection)
+        {
+            unchecked
+            {
+                return collection.Aggregate(0, (current, equatable) =>
+                    (current * 397) ^ (equatable != null ? equatable.GetHashCode() : 0));
+            }
         }
     }
 }
