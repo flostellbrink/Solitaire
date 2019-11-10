@@ -1,4 +1,4 @@
-# Solitaire
+# Solitaire [![Badge](https://github.com/flostellbrink/Solitaire/workflows/.NET%20Core/badge.svg)](https://github.com/flostellbrink/Solitaire/actions)
 
 Command line version of the Solitaire Game from [Shenzhen I/O](http://www.zachtronics.com/shenzhen-io/).
 
