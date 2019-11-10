@@ -19,7 +19,7 @@ namespace Solitaire.Stacks
         }
 
         public override IEnumerable<Unit> MovableCards =>
-            Cards.Reverse().Aggregate(Enumerable.Empty<Unit>(), (result, card) => result
+            Cards.AsEnumerable().Reverse().Aggregate(Enumerable.Empty<Unit>(), (result, card) => result
                     .Append(new Unit((result.LastOrDefault()?.Cards ?? Enumerable.Empty<Card>())
                         .Prepend(card).ToList())))
                 .TakeWhile(unit => unit.Valid);

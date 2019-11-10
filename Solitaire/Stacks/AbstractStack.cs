@@ -8,7 +8,7 @@ namespace Solitaire.Stacks
 {
     internal abstract class AbstractStack : IStack
     {
-        internal readonly ICollection<Card> Cards = new List<Card>();
+        internal readonly List<Card> Cards = new List<Card>();
 
         public abstract IEnumerable<Unit> MovableCards { get; }
 
@@ -34,8 +34,10 @@ namespace Solitaire.Stacks
         public void Remove(Unit unit)
         {
             Debug.Assert(MovableCards.Contains(unit));
-            foreach (var card in unit.Cards)
+            foreach (var card in unit.Cards.Reverse())
             {
+                Debug.Assert(Cards[^1].Equals(card));
+                Cards.RemoveAt(Cards.Count - 1);
                 Cards.Remove(card);
             }
         }
