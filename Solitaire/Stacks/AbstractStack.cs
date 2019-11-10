@@ -38,7 +38,6 @@ namespace Solitaire.Stacks
             {
                 Debug.Assert(Cards[^1].Equals(card));
                 Cards.RemoveAt(Cards.Count - 1);
-                Cards.Remove(card);
             }
         }
 
