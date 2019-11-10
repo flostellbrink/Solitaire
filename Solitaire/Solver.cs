@@ -13,25 +13,43 @@ namespace Solitaire
 
         private HashSet<int> VisitedBoards { get; } = new HashSet<int>();
 
-        private List<Board> Frontier { get; } = new List<Board>();
+        private HashSet<int> InFrontier { get; } = new HashSet<int>();
 
-        private Board Result { get; set; } = null;
+        private SortedList<int, List<Board>> Frontier { get; } = new SortedList<int, List<Board>>();
+
+        private void AddToFrontier(Board board)
+        {
+            var hash = board.GetHashCode();
+            if (VisitedBoards.Contains(hash) || InFrontier.Contains(hash)) return;
+            InFrontier.Add(hash);
+            var loss = board.Loss;
+            if (Frontier.ContainsKey(loss))
+                Frontier[loss].Add(board);
+            else
+                Frontier.Add(loss, new List<Board> {board});
+        }
 
         public Solver(Board board)
         {
             Board = board;
-            Frontier.Add(board);
+            AddToFrontier(board);
         }
 
         public Board Solve()
         {
             while (true)
             {
-                Frontier.Sort((a, b) => a.Loss.CompareTo(b.Loss));
-                var currentBoard = Frontier.FirstOrDefault();
-                if (currentBoard == null) return null;
-                Frontier.Remove(currentBoard);
-                Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}  \r");
+                if (Frontier.Count == 0) return null;
+                var (key, value) = Frontier.First();
+                if ( !value.Any())
+                {
+                    Frontier.Remove(key);
+                    continue;
+                }
+                var currentBoard = value.First();
+                value.Remove(currentBoard);
+
+                Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)} \r");
 
                 if(!VisitedBoards.Add(currentBoard.GetHashCode())) continue;
                 if (currentBoard.Solved) return currentBoard;
@@ -40,7 +58,7 @@ namespace Solitaire
                 {
                     var clone = new Board(currentBoard);
                     move.Translate(clone).Apply();
-                    Frontier.Add(clone);
+                    AddToFrontier(clone);
                 }
             }
         }
