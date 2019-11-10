@@ -9,12 +9,17 @@ namespace Solitaire
     {
         public static void Main(string[] args)
         {
+            
+        }
+
+        public static void SolveRandom()
+        {
             // We want a completely blank board to replay the history on
             var board = new Board(applyForcedMoves: false);
             Console.WriteLine(board);
 
             // Solve the board on a copy with automatic moves
-            var clone = new Board(board) {ApplyForcedMoves = true};
+            var clone = new Board(board) { ApplyForcedMoves = true };
             clone.ApplyForcedMove();
             var solver = new Solver(clone);
             var solution = solver.Solve();
