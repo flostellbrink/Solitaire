@@ -8,7 +8,7 @@ namespace Solitaire.Stacks
     {
         private readonly int _index;
 
-        public bool Locked = false;
+        public bool Locked;
 
         public LockableStack(int index)
         {

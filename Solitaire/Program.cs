@@ -9,7 +9,7 @@ namespace Solitaire
     {
         public static void Main(string[] args)
         {
-            FindUnsolvable();
+            SolveRandom();
         }
 
         public static void FindUnsolvable()
@@ -52,7 +52,7 @@ namespace Solitaire
             var index = 0;
             foreach (var move in solution.MoveHistory.Reverse())
             {
-                var translated = move.Translate(board);
+                var translated = move.Clone(board);
                 var automatic = translated.IsForced();
                 translated.Apply();
 

@@ -23,7 +23,7 @@ namespace Solitaire.Moves
             Unit = unit;
         }
 
-        public IMove Translate(Board targetBoard)
+        public IMove Clone(Board targetBoard)
         {
             return new Move(targetBoard,
                 targetBoard.AllStacks.Single(source => source.ToString() == Source.ToString()),
@@ -39,7 +39,7 @@ namespace Solitaire.Moves
             return Destination switch
             {
                 FlowerStack _ when card.Color == Color.Flower && card.Value == Value.Flower => true,
-                FilingStack _ when Board.MinNextFilingValue == card.Value => true,
+                FilingStack _ when Board.HighestAutomaticFilingValue >= card.Value => true,
                 _ => false
             };
         }

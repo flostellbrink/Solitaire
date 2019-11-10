@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Solitaire.Game;
 
 namespace Solitaire
@@ -29,6 +27,21 @@ namespace Solitaire
                 Frontier.Add(loss, new List<Board> {board});
         }
 
+        private Board GetFromFrontier()
+        {
+            if (Frontier.Count == 0) return null;
+            var (key, value) = Frontier.First();
+
+            var result = value.First();
+            value.Remove(result);
+            if (!value.Any())
+            {
+                Frontier.Remove(key);
+            }
+
+            return result;
+        }
+
         public Solver(Board board)
         {
             Board = board;
@@ -39,15 +52,8 @@ namespace Solitaire
         {
             while (true)
             {
-                if (Frontier.Count == 0) return null;
-                var (key, value) = Frontier.First();
-                if ( !value.Any())
-                {
-                    Frontier.Remove(key);
-                    continue;
-                }
-                var currentBoard = value.First();
-                value.Remove(currentBoard);
+                var currentBoard = GetFromFrontier();
+                if (currentBoard == null) return null;
 
                 if (debugOutput)
                 {
@@ -60,7 +66,7 @@ namespace Solitaire
                 foreach (var move in currentBoard.AllMoves.ToList())
                 {
                     var clone = new Board(currentBoard);
-                    move.Translate(clone).Apply();
+                    move.Clone(clone).Apply();
                     AddToFrontier(clone);
                 }
             }

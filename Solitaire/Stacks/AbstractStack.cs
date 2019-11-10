@@ -43,7 +43,7 @@ namespace Solitaire.Stacks
 
         public override int GetHashCode()
         {
-            return (Cards != null ? Cards.GetCollectionHashCode() : 0);
+            return Cards != null ? Cards.GetCollectionHashCode() : 0;
         }
     }
 }

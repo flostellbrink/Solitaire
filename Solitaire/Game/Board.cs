@@ -11,20 +11,12 @@ namespace Solitaire.Game
     public class Board
     {
         internal const int StackCount = 8;
+
         internal const int SymbolsPerColor = 4;
 
-        public bool ApplyForcedMoves = true;
+        public bool ApplyForcedMoves;
 
         public Stack<IMove> MoveHistory = new Stack<IMove>();
-
-        public bool Solved => _stacks.All(stack => !stack.Cards.Any());
-
-        public int Loss =>
-            MoveHistory.Count +
-            _stacks.Sum(stack => stack.Cards.Count) +
-            _stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
-            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Symbol)) +
-            _lockableStacks.Count(locked => !locked.Locked) * 100;
 
         private readonly ICollection<LockableStack> _lockableStacks =
             Card.BaseColors.Select(index => new LockableStack((int)index + 1)).ToList();
@@ -70,6 +62,15 @@ namespace Solitaire.Game
             Debug.Assert(GetHashCode() == board.GetHashCode());
         }
 
+        public bool Solved => _stacks.All(stack => !stack.Cards.Any());
+
+        public int Loss =>
+            MoveHistory.Count +
+            _stacks.Sum(stack => stack.Cards.Count) +
+            _stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
+            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Symbol)) +
+            _lockableStacks.Count(locked => !locked.Locked) * 100;
+
         public IEnumerable<IStack> AllStacks => Enumerable.Empty<IStack>()
             .Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Concat(_stacks);
 
@@ -91,7 +92,7 @@ namespace Solitaire.Game
 
         public IEnumerable<IMove> AllMoves => Enumerable.Empty<IMove>().Concat(AllStandardMoves).Concat(AllLockMoves);
 
-        public Value MinNextFilingValue => _filingStacks.Min(filing => filing.NextIndex);
+        public Value HighestAutomaticFilingValue => _filingStacks.Min(filing => filing.NextIndex + 1);
 
         public void ApplyForcedMove()
         {

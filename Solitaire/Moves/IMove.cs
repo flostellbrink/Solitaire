@@ -7,6 +7,7 @@ namespace Solitaire.Moves
         bool IsForced();
 
         void Apply();
-        IMove Translate(Board targetBoard);
+
+        IMove Clone(Board targetBoard);
     }
 }

@@ -16,7 +16,6 @@ namespace Solitaire.Moves
 
         public readonly Unit Unit;
 
-
         public LockMove(Board board, ICollection<IStack> sources, LockableStack destination, Unit unit)
         {
             Board = board;
@@ -25,7 +24,7 @@ namespace Solitaire.Moves
             Unit = unit;
         }
 
-        public IMove Translate(Board targetBoard)
+        public IMove Clone(Board targetBoard)
         {
             return new LockMove(targetBoard,
                 Sources.Select(mSource =>
