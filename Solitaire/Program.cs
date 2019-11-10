@@ -21,21 +21,18 @@ namespace Solitaire
 
             // Replay the solution and count manual moves
             var manualMoves = 0;
+            var index = 0;
             foreach (var move in solution.MoveHistory.Reverse())
             {
-                move.Translate(board).Apply();
-                Console.Write(move);
-                if (!move.IsForced())
-                {
-                    Console.WriteLine(" (manual)\n");
-                    Console.WriteLine(board);
-                    manualMoves++;
-                }
-                else
-                {
-                    Console.WriteLine(" (automatic)\n");
-                }
-                
+                var translated = move.Translate(board);
+                var automatic = translated.IsForced();
+                translated.Apply();
+
+                if (!automatic) manualMoves++;
+
+                Console.WriteLine($"MinNextFilingLevel: {board.MinNextFilingValue}");
+                Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}" +
+                              (automatic ? "(automatic)\n\n" : $"\n\n{board}"));
             }
 
             Console.WriteLine();
