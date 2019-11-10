@@ -30,7 +30,6 @@ namespace Solitaire
 
                 if (!automatic) manualMoves++;
 
-                Console.WriteLine($"MinNextFilingLevel: {board.MinNextFilingValue}");
                 Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}" +
                               (automatic ? "(automatic)\n\n" : $"\n\n{board}"));
             }
