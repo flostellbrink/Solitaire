@@ -9,7 +9,30 @@ namespace Solitaire
     {
         public static void Main(string[] args)
         {
-            
+            FindUnsolvable();
+        }
+
+        public static void FindUnsolvable()
+        {
+            var solved = 0;
+            var failed = 0;
+            while (true)
+            {
+                var board = new Board();
+                var solver = new Solver(board);
+                var solution = solver.Solve();
+                if (solution == null)
+                {
+                    Console.WriteLine($"\nFailed to solve");
+                    failed++;
+                }
+                else
+                {
+                    Console.WriteLine($"\nSolved. Solution contains {solution.MoveHistory.Count} steps total.");
+                    solved++;
+                }
+                Console.WriteLine($"Solve rate: {(double)solved/(solved+failed):P}, solved: {solved}, failed: {failed}");
+            }
         }
 
         public static void SolveRandom()

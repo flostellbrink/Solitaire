@@ -37,12 +37,15 @@ namespace Solitaire.Game
         private readonly ICollection<Stack> _stacks =
             Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
 
-        public Board(bool applyForcedMoves = true)
+        public Board(bool applyForcedMoves = true, bool debugOutput = true)
         {
             ApplyForcedMoves = applyForcedMoves;
 
             var seed = Environment.TickCount;
-            Console.WriteLine($"Seed: {seed}");
+            if (debugOutput)
+            {
+                Console.WriteLine($"Seed: {seed}");
+            }
 
             var random = new Random(seed);
             var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();

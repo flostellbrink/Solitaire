@@ -35,7 +35,7 @@ namespace Solitaire
             AddToFrontier(board);
         }
 
-        public Board Solve()
+        public Board Solve(bool debugOutput = true)
         {
             while (true)
             {
@@ -49,7 +49,10 @@ namespace Solitaire
                 var currentBoard = value.First();
                 value.Remove(currentBoard);
 
-                Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)} \r");
+                if (debugOutput)
+                {
+                    Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)} \r");
+                }
 
                 if(!VisitedBoards.Add(currentBoard.GetHashCode())) continue;
                 if (currentBoard.Solved) return currentBoard;
