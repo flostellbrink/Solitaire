@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace Solitaire.Game
             _lockableStacks.Count(locked => !locked.Locked) * 100;
 
         private readonly ICollection<LockableStack> _lockableStacks =
-            Card.BaseColors.Select(index => new LockableStack((int)index)).ToList();
+            Card.BaseColors.Select(index => new LockableStack((int)index + 1)).ToList();
 
         private readonly FlowerStack _flowerStack = new FlowerStack();
 
@@ -35,7 +35,7 @@ namespace Solitaire.Game
             Card.BaseColors.Select(color => new FilingStack(color)).ToList();
 
         private readonly ICollection<Stack> _stacks =
-            Enumerable.Range(0, StackCount).Select(index => new Stack(index)).ToList();
+            Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
 
         public Board(bool applyForcedMoves = true)
         {
