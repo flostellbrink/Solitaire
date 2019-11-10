@@ -13,6 +13,11 @@ namespace Solitaire.Stacks
             _index = index;
         }
 
+        public Stack(Stack stack) : base(stack)
+        {
+            _index = stack._index;
+        }
+
         public override IEnumerable<Unit> MovableCards =>
             Cards.Reverse().Aggregate(Enumerable.Empty<Unit>(), (result, card) => result
                     .Append(new Unit((result.LastOrDefault()?.Cards ?? Enumerable.Empty<Card>())

@@ -14,9 +14,17 @@ namespace Solitaire.Stacks
 
         public abstract bool Accepts(Unit _);
 
+        protected AbstractStack()
+        {
+        }
+
+        protected AbstractStack(AbstractStack stack)
+        {
+            Cards = new List<Card>(stack.Cards);
+        }
+
         public void Add(Unit unit)
         {
-            Debug.Assert(Accepts(unit));
             foreach (var card in unit.Cards)
             {
                 Cards.Add(card);

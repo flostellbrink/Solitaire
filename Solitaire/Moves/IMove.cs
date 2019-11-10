@@ -4,8 +4,9 @@ namespace Solitaire.Moves
 {
     public interface IMove
     {
-        bool IsForced(Board board);
+        bool IsForced();
 
-        void Apply(Board board);
+        void Apply();
+        IMove Translate(Board targetBoard);
     }
 }

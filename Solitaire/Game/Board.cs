@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Solitaire.Moves;
@@ -12,19 +13,18 @@ namespace Solitaire.Game
         internal const int StackCount = 8;
         internal const int SymbolsPerColor = 4;
 
-        public Board()
-        {
-            var random = new Random();
-            var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
+        public bool ApplyForcedMoves = true;
 
-            var stackIndex = 0;
-            foreach (var card in deck)
-            {
-                _stacks.ElementAt(stackIndex++ % _stacks.Count).Cards.Add(card);
-            }
+        public Stack<IMove> MoveHistory = new Stack<IMove>();
 
-            ApplyForcedMove();
-        }
+        public bool Solved => _stacks.All(stack => !stack.Cards.Any());
+
+        public int Loss =>
+            MoveHistory.Count +
+            _stacks.Sum(stack => stack.Cards.Count) +
+            _stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
+            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Symbol)) +
+            _lockableStacks.Count(locked => !locked.Locked) * 100;
 
         private readonly ICollection<LockableStack> _lockableStacks =
             Card.BaseColors.Select(index => new LockableStack((int)index)).ToList();
@@ -37,6 +37,36 @@ namespace Solitaire.Game
         private readonly ICollection<Stack> _stacks =
             Enumerable.Range(0, StackCount).Select(index => new Stack(index)).ToList();
 
+        public Board(bool applyForcedMoves = true)
+        {
+            ApplyForcedMoves = applyForcedMoves;
+
+            var seed = Environment.TickCount;
+            Console.WriteLine($"Seed: {seed}");
+
+            var random = new Random(seed);
+            var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
+
+            var stackIndex = 0;
+            foreach (var card in deck)
+            {
+                _stacks.ElementAt(stackIndex++ % _stacks.Count).Cards.Add(card);
+            }
+
+            ApplyForcedMove();
+        }
+
+        public Board(Board board)
+        {
+            ApplyForcedMoves = board.ApplyForcedMoves;
+            MoveHistory = new Stack<IMove>(board.MoveHistory.Reverse());
+            _lockableStacks = board._lockableStacks.Select(lockable => new LockableStack(lockable)).ToList();
+            _flowerStack = new FlowerStack(board._flowerStack);
+            _filingStacks = board._filingStacks.Select(filing => new FilingStack(filing)).ToList();
+            _stacks = board._stacks.Select(stack => new Stack(stack)).ToList();
+            Debug.Assert(GetHashCode() == board.GetHashCode());
+        }
+
         public IEnumerable<IStack> AllStacks => Enumerable.Empty<IStack>()
             .Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Concat(_stacks);
 
@@ -45,11 +75,12 @@ namespace Solitaire.Game
                 .SelectMany(unit => AllStacks
                     .Where(destination => destination != source)
                     .Where(destination => destination.Accepts(unit))
-                    .Select(destination => new Move(source, destination, unit))));
+                    .Select(destination => new Move(this, source, destination, unit))));
 
         private IEnumerable<LockMove> AllLockMoves => Card.BaseColors
             .Select(color => new Unit(new[] {new Card(color, Value.Symbol)}))
             .Select(unit => new LockMove(
+                this,
                 AllStacks.Where(stack => stack.MovableCards.Contains(unit)).ToList(),
                 _lockableStacks.FirstOrDefault(lockable => lockable.Accepts(unit) || lockable.MovableCards.Contains(unit)),
                 unit))
@@ -59,12 +90,11 @@ namespace Solitaire.Game
 
         public Value MinNextFilingValue => _filingStacks.Min(filing => filing.NextIndex);
 
-        public bool ApplyForcedMove()
+        public void ApplyForcedMove()
         {
-            var forcedMove = AllMoves.FirstOrDefault(move => move.IsForced(this));
-            if (forcedMove == null) return false;
-            forcedMove.Apply(this);
-            return true;
+            if (!ApplyForcedMoves) return;
+            var forcedMove = AllMoves.FirstOrDefault(move => move.IsForced());
+            forcedMove?.Apply();
         }
 
         public override string ToString()
@@ -80,7 +110,10 @@ namespace Solitaire.Game
 
             // Values top
             builder.AppendJoinPadded("|", maxStackWidth,
-                Enumerable.Empty<AbstractStack>().Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Select(stack => stack.Cards.LastOrDefault()));
+                _lockableStacks.Select(stack =>
+                        stack.Locked ? "Locked" : stack.Cards.LastOrDefault()?.ToString() ?? string.Empty)
+                    .Concat(Enumerable.Empty<AbstractStack>().Append(_flowerStack).Concat(_filingStacks)
+                        .Select(stack => stack.Cards.LastOrDefault()?.ToString() ?? string.Empty)));
             builder.AppendLine();
 
             // Header bottom
@@ -104,10 +137,10 @@ namespace Solitaire.Game
         {
             unchecked
             {
-                var hashCode = (_lockableStacks != null ? _lockableStacks.GetCollectionHashCode() : 0);
+                var hashCode = (_lockableStacks != null ? _lockableStacks.GetCollectionHashCodeUnordered() : 0);
                 hashCode = (hashCode * 397) ^ (_flowerStack != null ? _flowerStack.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (_filingStacks != null ? _filingStacks.GetCollectionHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_stacks != null ? _stacks.GetCollectionHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_stacks != null ? _stacks.GetCollectionHashCodeUnordered() : 0);
                 return hashCode;
             }
         }

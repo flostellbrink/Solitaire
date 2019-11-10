@@ -6,6 +6,12 @@ namespace Solitaire.Stacks
 {
     internal class FlowerStack : AbstractStack
     {
+        public FlowerStack() { }
+
+        public FlowerStack(FlowerStack flowerStack) : base(flowerStack)
+        {
+        }
+
         public override IEnumerable<Unit> MovableCards => Enumerable.Empty<Unit>();
 
         public override bool Accepts(Unit unit) =>

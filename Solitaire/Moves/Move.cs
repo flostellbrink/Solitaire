@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using Solitaire.Game;
 using Solitaire.Stacks;
 
@@ -6,20 +7,31 @@ namespace Solitaire.Moves
 {
     internal class Move : IMove
     {
+        public readonly Board Board;
+
         public readonly IStack Source;
 
         public readonly IStack Destination;
 
         public readonly Unit Unit;
 
-        public Move(IStack source, IStack destination, Unit unit)
+        public Move(Board board, IStack source, IStack destination, Unit unit)
         {
+            Board = board;
             Source = source;
             Destination = destination;
             Unit = unit;
         }
 
-        public bool IsForced(Board board)
+        public IMove Translate(Board targetBoard)
+        {
+            return new Move(targetBoard,
+                targetBoard.AllStacks.Single(source => source.ToString() == Source.ToString()),
+                targetBoard.AllStacks.Single(destination => destination.ToString() == Destination.ToString()),
+                Unit);
+        }
+
+        public bool IsForced()
         {
             if (Unit.Cards.Count != 1) return false;
             var card = Unit.Cards.First();
@@ -27,16 +39,19 @@ namespace Solitaire.Moves
             return Destination switch
             {
                 FlowerStack _ when card.Color == Color.Flower && card.Value == Value.Flower => true,
-                FilingStack _ when board.MinNextFilingValue == card.Value => true,
+                FilingStack _ when Board.MinNextFilingValue == card.Value => true,
                 _ => false
             };
         }
 
-        public void Apply(Board board)
+        public void Apply()
         {
             Source.Remove(Unit);
+            Debug.Assert(Destination.Accepts(Unit));
             Destination.Add(Unit);
-            board.ApplyForcedMove();
+
+            Board.MoveHistory.Push(this);
+            Board.ApplyForcedMove();
         }
 
         public override string ToString()

@@ -13,7 +13,12 @@ namespace Solitaire.Stacks
             _color = color;
         }
 
-        public Value NextIndex => Cards.FirstOrDefault()?.Value + 1 ?? Value.N1;
+        public FilingStack(FilingStack stack) : base(stack)
+        {
+            _color = stack._color;
+        }
+
+        public Value NextIndex => Cards.LastOrDefault()?.Value + 1 ?? Value.N1;
 
         public override IEnumerable<Unit> MovableCards => Enumerable.Empty<Unit>();
 

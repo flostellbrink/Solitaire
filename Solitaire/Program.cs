@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Solitaire.Game;
 
@@ -9,36 +8,37 @@ namespace Solitaire
     {
         public static void Main(string[] args)
         {
-            RandomGame();
-        }
+            // We want a completely blank board to replay the history on
+            var board = new Board(applyForcedMoves: false);
+            Console.WriteLine(board);
 
-        public static void RandomGame()
-        {
-            var random = new Random();
-            var board = new Board();
-            var knownBoards = new HashSet<int>();
+            // Solve the board on a copy with automatic moves
+            var clone = new Board(board) {ApplyForcedMoves = true};
+            clone.ApplyForcedMove();
+            var solver = new Solver(clone);
+            var solution = solver.Solve();
 
-            while (true)
+            // Replay the solution and count manual moves
+            var manualMoves = 0;
+            foreach (var move in solution.MoveHistory.Reverse())
             {
-                if (!knownBoards.Add(board.GetHashCode()))
+                move.Translate(board).Apply();
+                Console.Write(move);
+                if (!move.IsForced())
                 {
-                    Console.WriteLine("Already known board state");
-                    break;
-
+                    Console.WriteLine(" (manual)\n");
+                    Console.WriteLine(board);
+                    manualMoves++;
                 }
-
-                Console.WriteLine($"Board ({board.GetHashCode()}):");
-                Console.WriteLine(board);
-
-                var moves = board.AllMoves.ToList();
-                if(!moves.Any()) break;
-
-                var selectedMove = moves[random.Next(moves.Count)];
-                Console.WriteLine("Selected move: " + selectedMove);
-                Console.WriteLine();
-
-                selectedMove.Apply(board);
+                else
+                {
+                    Console.WriteLine(" (automatic)\n");
+                }
+                
             }
+
+            Console.WriteLine();
+            Console.WriteLine($"Solution has {solution.MoveHistory.Count} moves, of which {manualMoves} are not automatic.");
         }
     }
 }

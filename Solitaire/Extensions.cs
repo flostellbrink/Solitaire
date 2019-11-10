@@ -39,8 +39,20 @@ namespace Solitaire
         {
             unchecked
             {
-                return collection.Aggregate(0, (current, equatable) =>
-                    (current * 397) ^ (equatable != null ? equatable.GetHashCode() : 0));
+                return collection
+                    .Select(equatable => equatable != null ? equatable.GetHashCode() : 0)
+                    .Aggregate(0, (result, hash) => (result * 397) ^ hash);
+            }
+        }
+
+        public static int GetCollectionHashCodeUnordered<T>(this ICollection<T> collection)
+        {
+            unchecked
+            {
+                return collection
+                    .Select(equatable => equatable != null ? equatable.GetHashCode() : 0)
+                    .OrderBy(hash => hash)
+                    .Aggregate(0, (result, hash) => (result * 397) ^ hash);
             }
         }
     }

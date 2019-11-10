@@ -15,6 +15,12 @@ namespace Solitaire.Stacks
             _index = index;
         }
 
+        public LockableStack(LockableStack stack) : base(stack)
+        {
+            _index = stack._index;
+            Locked = stack.Locked;
+        }
+
         public override IEnumerable<Unit> MovableCards =>
             Locked || !Cards.Any() ? Enumerable.Empty<Unit>() : new[] {new Unit(new[] {Cards.First()})};
 
