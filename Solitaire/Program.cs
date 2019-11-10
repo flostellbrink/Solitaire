@@ -31,7 +31,7 @@ namespace Solitaire
                 if (!automatic) manualMoves++;
 
                 Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}" +
-                              (automatic ? "(automatic)\n\n" : $"\n\n{board}"));
+                              (automatic ? " (automatic)\n\n" : $"\n\n{board}\n"));
             }
 
             Console.WriteLine();
