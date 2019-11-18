@@ -31,14 +31,6 @@ namespace Solitaire
             }
         }
 
-        private static readonly Regex AnsiRegex = new Regex("\u001b[^m]+m", RegexOptions.Compiled);
-
-        public static string PadRightAnsi(this string value, int totalWidth)
-        {
-            var invisibleCharacters = AnsiRegex.Matches(value).Sum(match => match.Length);
-            return value.PadRight(totalWidth + invisibleCharacters);
-        }
-
         public static void AppendJoinPadded<T>(
             this StringBuilder builder,
             string separator,

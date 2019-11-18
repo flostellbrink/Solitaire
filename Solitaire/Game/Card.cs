@@ -77,16 +77,15 @@ namespace Solitaire.Game
             }
         }
 
-        private static readonly Dictionary<Color, string> AnsiColors = new Dictionary<Color, string>
+        private static readonly Dictionary<Color, AnsiColor> AnsiColors = new Dictionary<Color, AnsiColor>
         {
-            {Color.Black, "\u001b[0m"},
-            {Color.Red, "\u001b[31m"},
-            {Color.Green, "\u001b[32m"},
-            {Color.Flower, "\u001b[33m"},
+            {Color.Black, AnsiColor.None},
+            {Color.Red, AnsiColor.ForegroundRed},
+            {Color.Green, AnsiColor.ForegroundGreen},
+            {Color.Flower, AnsiColor.ForegroundYellow},
         };
 
-        private const string AnsiEndColor = "\u001b[0m";
-
-        public override string ToString() => $"{AnsiColors[Color]}{Color.ToDescription()} {Value.ToDescription()}{AnsiEndColor}";
+        public override string ToString() => 
+            $"{Color.ToDescription()} {Value.ToDescription()}".Colorize(AnsiColors[Color]);
     }
 }

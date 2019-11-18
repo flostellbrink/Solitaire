@@ -125,6 +125,10 @@ namespace Solitaire
             // Solve the original board
             var solver = new Solver(board);
             var solution = solver.Solve();
+            if (solution == null)
+            {
+                Console.WriteLine("Failed to find a solution");
+            }
 
             // Replay the solution and count manual moves
             var manualMoves = 0;

@@ -112,16 +112,18 @@ namespace Solitaire.Game
         public override string ToString()
         {
             const int maxStackWidth = 13;
+            const string separator = "|";
             var builder = new StringBuilder();
 
             // Header top
-            builder.Append("\u001b[43m");
-            builder.AppendJoinPadded("|", maxStackWidth,
+            builder.BeginColor(AnsiColor.BackgroundYellow);
+            builder.AppendJoinPadded(separator, maxStackWidth,
                 Enumerable.Empty<IStack>().Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks));
-            builder.AppendLine("\u001b[0m");
+            builder.EndColor();
+            builder.AppendLine();
 
             // Values top
-            builder.AppendJoinPadded("|", maxStackWidth,
+            builder.AppendJoinPadded(separator, maxStackWidth,
                 _lockableStacks.Select(stack =>
                         stack.Locked ? "Locked" : stack.Cards.LastOrDefault()?.ToString() ?? string.Empty)
                     .Concat(Enumerable.Empty<AbstractStack>().Append(_flowerStack).Concat(_filingStacks)
@@ -129,16 +131,17 @@ namespace Solitaire.Game
             builder.AppendLine();
 
             // Header bottom
-            builder.AppendLine("\u001b[43m");
-            builder.AppendJoinPadded("|", maxStackWidth, _stacks);
-            builder.AppendLine("\u001b[0m");
+            builder.BeginColor(AnsiColor.BackgroundYellow);
+            builder.AppendJoinPadded(separator, maxStackWidth, _stacks);
+            builder.EndColor();
+            builder.AppendLine();
 
             // Values bottom
             for (var index = 0; index < _stacks.Max(stack => stack.Cards.Count); index++)
             {
                 var indexLocal = index;
                 var cards = _stacks.Select(stack => stack.Cards.Skip(indexLocal).FirstOrDefault());
-                builder.AppendJoinPadded("|", maxStackWidth, cards);
+                builder.AppendJoinPadded(separator, maxStackWidth, cards);
                 builder.AppendLine();
             }
 
