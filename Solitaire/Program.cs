@@ -158,7 +158,7 @@ namespace Solitaire
 
                 if (board.Solved)
                 {
-                    Console.WriteLine("You solved it! Just imagine the win animation :)");
+                    Console.WriteLine("Congratulations, you solved the puzzle! You'll have to imagine the animation for now ;)");
                     return;
                 }
                 

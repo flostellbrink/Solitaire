@@ -5,6 +5,10 @@ namespace Solitaire
 {
     public static class CliHelper
     {
+        public const string Yes = "Yes";
+
+        public const string No = "No";
+
         private static ConsoleKey CharacterToConsoleKey(char character)
         {
             var value = character.ToString();
