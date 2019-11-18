@@ -4,18 +4,18 @@ using Solitaire.Game;
 
 namespace Solitaire.Stacks
 {
-    internal class FilingStack : AbstractStack
+    public class FilingStack : AbstractStack
     {
-        private readonly Color _color;
+        public Color Color { get; }
 
         public FilingStack(Color color)
         {
-            _color = color;
+            Color = color;
         }
 
         public FilingStack(FilingStack stack) : base(stack)
         {
-            _color = stack._color;
+            Color = stack.Color;
         }
 
         public Value NextIndex => Cards.LastOrDefault()?.Value + 1 ?? Value.N1;
@@ -26,10 +26,10 @@ namespace Solitaire.Stacks
         {
             if (unit.Cards.Count != 1) return false;
             var card = unit.Cards.First();
-            if (card.Color != _color || !Card.NumericValues.Contains(card.Value)) return false;
+            if (card.Color != Color || !Card.NumericValues.Contains(card.Value)) return false;
             return card.Value == NextIndex;
         }
 
-        public override string ToString() => $"Filing {_color}";
+        public override string ToString() => $"Filing {Color}";
     }
 }

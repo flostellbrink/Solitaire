@@ -5,10 +5,11 @@ using System.Linq;
 
 namespace Solitaire.Game
 {
-    public enum Color { Black, Green, Red, Flower }
+    public enum Color { None, Black, Green, Red, Flower }
 
     public enum Value
     {
+        None,
         [Description("1")] N1,
         [Description("2")] N2,
         [Description("3")] N3,

@@ -4,7 +4,7 @@ using Solitaire.Game;
 
 namespace Solitaire.Stacks
 {
-    internal class FlowerStack : AbstractStack
+    public class FlowerStack : AbstractStack
     {
         public FlowerStack() { }
 

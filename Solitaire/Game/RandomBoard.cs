@@ -18,7 +18,7 @@ namespace Solitaire.Game
             var stackIndex = 0;
             foreach (var card in deck)
             {
-                _stacks.ElementAt(stackIndex++ % _stacks.Count).Cards.Add(card);
+                Stacks.ElementAt(stackIndex++ % Stacks.Count).Cards.Add(card);
             }
         }
     }

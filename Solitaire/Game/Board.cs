@@ -18,15 +18,15 @@ namespace Solitaire.Game
 
         public Stack<IMove> MoveHistory = new Stack<IMove>();
 
-        private readonly ICollection<LockableStack> _lockableStacks =
-            Card.BaseColors.Select(index => new LockableStack((int)index + 1)).ToList();
+        protected readonly ICollection<LockableStack> LockableStacks =
+            Card.BaseColors.Select((_, index) => new LockableStack(index + 1)).ToList();
 
-        private readonly FlowerStack _flowerStack = new FlowerStack();
+        protected readonly FlowerStack FlowerStack = new FlowerStack();
 
-        private readonly ICollection<FilingStack> _filingStacks =
+        protected readonly ICollection<FilingStack> FilingStacks =
             Card.BaseColors.Select(color => new FilingStack(color)).ToList();
 
-        private protected readonly ICollection<Stack> _stacks =
+        protected readonly ICollection<Stack> Stacks =
             Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
 
         protected Board(bool applyForcedMoves = true)
@@ -38,19 +38,19 @@ namespace Solitaire.Game
         {
             ApplyForcedMoves = board.ApplyForcedMoves;
             MoveHistory = new Stack<IMove>(board.MoveHistory.Reverse());
-            _lockableStacks = board._lockableStacks.Select(lockable => new LockableStack(lockable)).ToList();
-            _flowerStack = new FlowerStack(board._flowerStack);
-            _filingStacks = board._filingStacks.Select(filing => new FilingStack(filing)).ToList();
-            _stacks = board._stacks.Select(stack => new Stack(stack)).ToList();
+            LockableStacks = board.LockableStacks.Select(lockable => new LockableStack(lockable)).ToList();
+            FlowerStack = new FlowerStack(board.FlowerStack);
+            FilingStacks = board.FilingStacks.Select(filing => new FilingStack(filing)).ToList();
+            Stacks = board.Stacks.Select(stack => new Stack(stack)).ToList();
             Debug.Assert(GetHashCode() == board.GetHashCode());
         }
 
-        public bool Solved => _stacks.All(stack => !stack.Cards.Any());
+        public bool Solved => Stacks.All(stack => !stack.Cards.Any());
 
         public bool IsValid()
         {
             var abstractStacks = Enumerable.Empty<AbstractStack>()
-                .Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Concat(_stacks);
+                .Concat(LockableStacks).Append(FlowerStack).Concat(FilingStacks).Concat(Stacks);
             var cardsOnBoard = abstractStacks.SelectMany(stack => stack.Cards).ToList();
 
             var missingCards = Card.FullSet.ExceptQuantitative(cardsOnBoard).ToList();
@@ -66,13 +66,13 @@ namespace Solitaire.Game
 
         public int Loss =>
             MoveHistory.Count +
-            _stacks.Sum(stack => stack.Cards.Count) +
-            _stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
-            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Dragon)) +
-            _lockableStacks.Count(locked => !locked.Locked) * 100;
+            Stacks.Sum(stack => stack.Cards.Count) +
+            Stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
+            LockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Dragon)) +
+            LockableStacks.Count(locked => !locked.Locked) * 100;
 
         public IEnumerable<IStack> AllStacks => Enumerable.Empty<IStack>()
-            .Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Concat(_stacks);
+            .Concat(LockableStacks).Append(FlowerStack).Concat(FilingStacks).Concat(Stacks);
 
         private IEnumerable<Move> AllStandardMoves => AllStacks
             .SelectMany(source => source.MovableCards
@@ -86,7 +86,7 @@ namespace Solitaire.Game
             .Select(unit => new LockMove(
                 this,
                 AllStacks.Where(stack => stack.MovableCards.Contains(unit)).ToList(),
-                _lockableStacks.FirstOrDefault(lockable => lockable.Accepts(unit) || lockable.MovableCards.Contains(unit)),
+                LockableStacks.FirstOrDefault(lockable => lockable.Accepts(unit) || lockable.MovableCards.Contains(unit)),
                 unit))
             .Where(move => move.Sources.Count == SymbolsPerColor && move.Destination != null);
 
@@ -100,7 +100,7 @@ namespace Solitaire.Game
             return clone.GetHashCode();
         }, this.GetHashCode());
 
-        public Value HighestAutomaticFilingValue => _filingStacks.Min(filing => filing.NextIndex + 1);
+        public Value HighestAutomaticFilingValue => FilingStacks.Min(filing => filing.NextIndex + 1);
 
         public void ApplyForcedMove()
         {
@@ -118,29 +118,29 @@ namespace Solitaire.Game
             // Header top
             builder.BeginColor(AnsiColor.BackgroundYellow);
             builder.AppendJoinPadded(separator, maxStackWidth,
-                Enumerable.Empty<IStack>().Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks));
+                Enumerable.Empty<IStack>().Concat(LockableStacks).Append(FlowerStack).Concat(FilingStacks));
             builder.EndColor();
             builder.AppendLine();
 
             // Values top
             builder.AppendJoinPadded(separator, maxStackWidth,
-                _lockableStacks.Select(stack =>
+                LockableStacks.Select(stack =>
                         stack.Locked ? "Locked" : stack.Cards.LastOrDefault()?.ToString() ?? string.Empty)
-                    .Concat(Enumerable.Empty<AbstractStack>().Append(_flowerStack).Concat(_filingStacks)
+                    .Concat(Enumerable.Empty<AbstractStack>().Append(FlowerStack).Concat(FilingStacks)
                         .Select(stack => stack.Cards.LastOrDefault()?.ToString() ?? string.Empty)));
             builder.AppendLine();
 
             // Header bottom
             builder.BeginColor(AnsiColor.BackgroundYellow);
-            builder.AppendJoinPadded(separator, maxStackWidth, _stacks);
+            builder.AppendJoinPadded(separator, maxStackWidth, Stacks);
             builder.EndColor();
             builder.AppendLine();
 
             // Values bottom
-            for (var index = 0; index < _stacks.Max(stack => stack.Cards.Count); index++)
+            for (var index = 0; index < Stacks.Max(stack => stack.Cards.Count); index++)
             {
                 var indexLocal = index;
-                var cards = _stacks.Select(stack => stack.Cards.Skip(indexLocal).FirstOrDefault());
+                var cards = Stacks.Select(stack => stack.Cards.Skip(indexLocal).FirstOrDefault());
                 builder.AppendJoinPadded(separator, maxStackWidth, cards);
                 builder.AppendLine();
             }
@@ -152,10 +152,10 @@ namespace Solitaire.Game
         {
             unchecked
             {
-                var hashCode = (_lockableStacks != null ? _lockableStacks.GetCollectionHashCodeUnordered() : 0);
-                hashCode = (hashCode * 397) ^ (_flowerStack != null ? _flowerStack.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_filingStacks != null ? _filingStacks.GetCollectionHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_stacks != null ? _stacks.GetCollectionHashCodeUnordered() : 0);
+                var hashCode = (LockableStacks != null ? LockableStacks.GetCollectionHashCodeUnordered() : 0);
+                hashCode = (hashCode * 397) ^ (FlowerStack != null ? FlowerStack.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (FilingStacks != null ? FilingStacks.GetCollectionHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Stacks != null ? Stacks.GetCollectionHashCodeUnordered() : 0);
                 return hashCode;
             }
         }

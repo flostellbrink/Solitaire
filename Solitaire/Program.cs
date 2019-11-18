@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Solitaire.Game;
 
@@ -83,7 +82,7 @@ namespace Solitaire
                 case custom:
                     Console.WriteLine("Creating custom board");
                     Console.WriteLine();
-                    return new InteractiveBoard();
+                    return new CustomBoard();
                 case seed:
                     Console.WriteLine("Creating board from seed");
                     Console.WriteLine();

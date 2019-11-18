@@ -4,7 +4,7 @@ using Solitaire.Game;
 
 namespace Solitaire.Stacks
 {
-    internal class LockableStack : AbstractStack
+    public class LockableStack : AbstractStack
     {
         private readonly int _index;
 
