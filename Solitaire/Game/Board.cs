@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -45,6 +46,23 @@ namespace Solitaire.Game
         }
 
         public bool Solved => _stacks.All(stack => !stack.Cards.Any());
+
+        public bool IsValid()
+        {
+            var abstractStacks = Enumerable.Empty<AbstractStack>()
+                .Concat(_lockableStacks).Append(_flowerStack).Concat(_filingStacks).Concat(_stacks);
+            var cardsOnBoard = abstractStacks.SelectMany(stack => stack.Cards).ToList();
+
+            var missingCards = Card.FullSet.ExceptQuantitative(cardsOnBoard).ToList();
+            if (missingCards.Any())
+                Console.Error.WriteLine($"The following cards are missing on this board: {string.Join(", ", missingCards)}");
+
+            var extraCards = cardsOnBoard.ExceptQuantitative(Card.FullSet).ToList();
+            if (extraCards.Any())
+                Console.Error.WriteLine($"The following cards should not be on this board: {string.Join(", ", missingCards)}");
+
+            return !extraCards.Any() && !missingCards.Any();
+        }
 
         public int Loss =>
             MoveHistory.Count +

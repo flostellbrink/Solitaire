@@ -64,5 +64,17 @@ namespace Solitaire
                 if (keys.Add(by(value))) yield return value;
             }
         }
+
+        // Like Except, but only removes one instance of T per item of except
+        public static IEnumerable<T> ExceptQuantitative<T>(this IEnumerable<T> enumerable, IEnumerable<T> except) where T: IEquatable<T>
+        {
+            var exceptGroups = except
+                .GroupBy(value => value)
+                .ToLookup(group => group.Key, group => group.Count());
+            return enumerable
+                .GroupBy(value => value)
+                .Select(group => (group.Key, Count: group.Count(), Other: exceptGroups[group.Key].FirstOrDefault()))
+                .SelectMany(entry => Enumerable.Repeat(entry.Key, Math.Max(0, entry.Count - entry.Other)));
+        }
     }
 }

@@ -14,8 +14,7 @@ namespace Solitaire
                 Console.Write("\r".PadRight(Console.WindowWidth));
                 Console.Write("\r");
                 if (validAnswers.Contains(decision)) return decision;
-                var validAnswersString = string.Join(", ", validAnswers);
-                Console.Write($"{question} - {decision} is not part of {validAnswersString}");
+                Console.Write($"{question} - {decision} is not part of {string.Join(", ", validAnswers)}");
             }
         }
 

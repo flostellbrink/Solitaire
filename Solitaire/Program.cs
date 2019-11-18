@@ -34,8 +34,13 @@ namespace Solitaire
 
         public static void CreateGame()
         {
-            var board = CreateBoard();
-            Console.WriteLine(board);
+            Board board;
+            while (true)
+            {
+                board = CreateBoard();
+                Console.WriteLine(board);
+                if (board.IsValid()) break;
+            }
 
             var decision = "(S)olve automatically, (P)play"
                 .AskForDecision(ConsoleKey.S, ConsoleKey.P);
@@ -135,7 +140,7 @@ namespace Solitaire
             board.ApplyForcedMove();
             while (true)
             {
-                Console.WriteLine($"Board ({board.GetHashCode()}):");
+                Console.WriteLine("Current board:");
                 Console.WriteLine(board);
                 Console.WriteLine();
 
