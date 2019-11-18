@@ -18,7 +18,7 @@ namespace Solitaire.Game
         [Description("7")] N7,
         [Description("8")] N8,
         [Description("9")] N9,
-        Symbol, Flower
+        Dragon, Flower
     }
 
     public class Card : IEquatable<Card>
@@ -41,7 +41,7 @@ namespace Solitaire.Game
 
         public static IEnumerable<Card> FullSet => BaseColors
             .SelectMany(color => BaseValues.Select(value => new Card(color, value)))
-            .Concat(BaseColors.SelectMany(color => Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Symbol))))
+            .Concat(BaseColors.SelectMany(color => Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Dragon))))
             .Append(new Card(Color.Flower, Value.Flower));
 
         internal static HashSet<Value> NumericValues = new HashSet<Value>
@@ -85,6 +85,8 @@ namespace Solitaire.Game
             {Color.Flower, "\u001b[33m"},
         };
 
-        public override string ToString() => $"{AnsiColors[Color]}{Color.ToDescription()} {Value.ToDescription()}\u001b[0m";
+        private const string AnsiEndColor = "\u001b[0m";
+
+        public override string ToString() => $"{AnsiColors[Color]}{Color.ToDescription()} {Value.ToDescription()}{AnsiEndColor}";
     }
 }

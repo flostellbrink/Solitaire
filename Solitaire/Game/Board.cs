@@ -68,7 +68,7 @@ namespace Solitaire.Game
             MoveHistory.Count +
             _stacks.Sum(stack => stack.Cards.Count) +
             _stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2 +
-            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Symbol)) +
+            _lockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Dragon)) +
             _lockableStacks.Count(locked => !locked.Locked) * 100;
 
         public IEnumerable<IStack> AllStacks => Enumerable.Empty<IStack>()
@@ -82,7 +82,7 @@ namespace Solitaire.Game
                     .Select(destination => new Move(this, source, destination, unit))));
 
         private IEnumerable<LockMove> AllLockMoves => Card.BaseColors
-            .Select(color => new Unit(new[] {new Card(color, Value.Symbol)}))
+            .Select(color => new Unit(new[] {new Card(color, Value.Dragon)}))
             .Select(unit => new LockMove(
                 this,
                 AllStacks.Where(stack => stack.MovableCards.Contains(unit)).ToList(),

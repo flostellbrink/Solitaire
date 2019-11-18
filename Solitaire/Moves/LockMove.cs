@@ -39,7 +39,7 @@ namespace Solitaire.Moves
         {
             Debug.Assert(Destination.Cards.Count <= 1);
             Debug.Assert(Destination.Cards.All(card => card.Color == Unit.Cards.First().Color));
-            Debug.Assert(Destination.Cards.All(card => card.Value == Value.Symbol));
+            Debug.Assert(Destination.Cards.All(card => card.Value == Value.Dragon));
 
             foreach (var source in Sources)
             {
@@ -51,7 +51,7 @@ namespace Solitaire.Moves
 
             Debug.Assert(Destination.Cards.Count == 4);
             Debug.Assert(Destination.Cards.All(card => card.Color == Unit.Cards.First().Color));
-            Debug.Assert(Destination.Cards.All(card => card.Value == Value.Symbol));
+            Debug.Assert(Destination.Cards.All(card => card.Value == Value.Dragon));
 
             Board.MoveHistory.Push(this);
             Board.ApplyForcedMove();
