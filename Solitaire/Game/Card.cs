@@ -1,12 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Solitaire.Game
 {
     public enum Color { Black, Green, Red, Flower }
 
-    public enum Value { N1, N2, N3, N4, N5, N6, N7, N8, N9, Symbol, Flower }
+    public enum Value
+    {
+        [Description("1")] N1,
+        [Description("2")] N2,
+        [Description("3")] N3,
+        [Description("4")] N4,
+        [Description("5")] N5,
+        [Description("6")] N6,
+        [Description("7")] N7,
+        [Description("8")] N8,
+        [Description("9")] N9,
+        Symbol, Flower
+    }
 
     public class Card : IEquatable<Card>
     {
@@ -72,6 +85,6 @@ namespace Solitaire.Game
             {Color.Flower, "\u001b[33m"},
         };
 
-        public override string ToString() => $"{AnsiColors[Color]}{Color} {Value}\u001b[0m";
+        public override string ToString() => $"{AnsiColors[Color]}{Color.ToDescription()} {Value.ToDescription()}\u001b[0m";
     }
 }

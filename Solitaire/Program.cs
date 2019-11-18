@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Solitaire.Game;
 
@@ -13,16 +14,17 @@ namespace Solitaire
             Console.WriteLine(@" ______| |_____| |_____ __|__    |    |     | __|__ |    \_ |______");
             Console.WriteLine();
 
-            var decision = "(C)reate new game, (B)enchmark solvability"
-                .AskForDecision(ConsoleKey.C, ConsoleKey.B);
+            const string createGame = "Create new game";
+            const string benchmark = "Benchmark solvability";
+            var decision = "{0}".AskForDecision(createGame, benchmark);
             switch (decision)
             {
-                case ConsoleKey.C:
+                case createGame:
                     Console.WriteLine("Creating new game");
                     Console.WriteLine();
                     CreateGame();
                     return;
-                case ConsoleKey.B:
+                case benchmark:
                     Console.WriteLine("Running benchmark:");
                     Console.WriteLine();
                     BenchmarkSolvability();
@@ -37,21 +39,26 @@ namespace Solitaire
             Board board;
             while (true)
             {
+                Console.WriteLine("Creating board");
+                Console.WriteLine();
                 board = CreateBoard();
                 Console.WriteLine(board);
-                if (board.IsValid()) break;
+                var valid = board.IsValid();
+                Console.WriteLine();
+                if (valid) break;
             }
 
-            var decision = "(S)olve automatically, (P)play"
-                .AskForDecision(ConsoleKey.S, ConsoleKey.P);
+            const string solve = "Solve automatically";
+            const string play = "Play";
+            var decision = "{0}".AskForDecision(solve, play);
             switch (decision)
             {
-                case ConsoleKey.S:
+                case solve:
                     Console.WriteLine("Solving board automatically");
                     Console.WriteLine();
                     Solve(board);
                     return;
-                case ConsoleKey.P:
+                case play:
                     Console.WriteLine("Playing game");
                     Console.WriteLine();
                     Play(board);
@@ -61,20 +68,23 @@ namespace Solitaire
             }
         }
 
-        public static Board CreateBoard() {
-            var decision = "(R)andom board, (C)ustom board, (S)eed board"
-                .AskForDecision(ConsoleKey.R, ConsoleKey.C, ConsoleKey.S);
+        public static Board CreateBoard()
+        {
+            const string random = "Random board";
+            const string custom = "Custom board";
+            const string seed = "Seed board";
+            var decision = "{0}".AskForDecision(random, custom, seed);
             switch (decision)
             {
-                case ConsoleKey.R:
+                case random:
                     Console.WriteLine("Creating random board");
                     Console.WriteLine();
                     return new RandomBoard();
-                case ConsoleKey.C:
+                case custom:
                     Console.WriteLine("Creating custom board");
                     Console.WriteLine();
                     return new InteractiveBoard();
-                case ConsoleKey.S:
+                case seed:
                     Console.WriteLine("Creating board from seed");
                     Console.WriteLine();
                     return new RandomBoard("Board seed".AskForNumber(0, int.MaxValue));
@@ -142,7 +152,6 @@ namespace Solitaire
             {
                 Console.WriteLine("Current board:");
                 Console.WriteLine(board);
-                Console.WriteLine();
 
                 if (board.Solved)
                 {
@@ -150,24 +159,16 @@ namespace Solitaire
                     return;
                 }
                 
-                var moves = board.DistinctMoves.ToList();
+                var moves = board.DistinctMoves.ToArray();
                 if (!moves.Any())
                 {
                     Console.WriteLine("No moves left, you lose.");
                     return;
                 }
 
-                Console.WriteLine("Distinct valid moves:");
-                Console.WriteLine(string.Join(
-                    "\n", 
-                    moves.Select((move, index) => $"{index + 1, 2}: {move}")));
-                Console.WriteLine();
-
-                var decision = "Chose your move".AskForNumber(1, moves.Count);
-                var selectedMove = moves[decision - 1];
+                var selectedMove = "Chose your move".AskForIndexedDecision(moves);
                 Console.WriteLine($"Selected move: {selectedMove}");
                 Console.WriteLine();
-
                 selectedMove.Apply();
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,6 +9,18 @@ namespace Solitaire
 {
     public static class Extensions
     {
+        public static string ToDescription<T>(this T value)
+        {
+            if (!typeof(T).IsEnum)
+                return value.ToString();
+
+            return typeof(T).GetField(value.ToString())
+                       .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                       .Cast<DescriptionAttribute>()
+                       .Select(attribute => attribute.Description)
+                       .FirstOrDefault() ?? value.ToString();
+        }
+
         public static IEnumerable<(T, T)> ConsecutivePairs<T>(this IEnumerable<T> list)
         {
             var previous = list.FirstOrDefault();
@@ -56,13 +69,13 @@ namespace Solitaire
             }
         }
 
-        public static IEnumerable<T> DistinctBy<T>(this IEnumerable<T> enumerable, Func<T, object> by)
+        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> enumerable, Func<T, TKey> by, params TKey[] initialKeys)
         {
-            var keys = new HashSet<object>();
+            var keys = new HashSet<TKey>();
+            foreach (var initialKey in initialKeys)
+                keys.Add(initialKey);
             foreach (var value in enumerable)
-            {
                 if (keys.Add(by(value))) yield return value;
-            }
         }
 
         // Like Except, but only removes one instance of T per item of except

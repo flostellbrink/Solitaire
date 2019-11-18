@@ -98,7 +98,7 @@ namespace Solitaire.Game
             var clone = new Board(this);
             move.Clone(clone).Apply();
             return clone.GetHashCode();
-        });
+        }, this.GetHashCode());
 
         public Value HighestAutomaticFilingValue => _filingStacks.Min(filing => filing.NextIndex + 1);
 
