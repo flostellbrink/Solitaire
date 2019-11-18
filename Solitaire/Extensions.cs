@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -52,6 +53,15 @@ namespace Solitaire
                     .Select(equatable => equatable != null ? equatable.GetHashCode() : 0)
                     .OrderBy(hash => hash)
                     .Aggregate(0, (result, hash) => (result * 397) ^ hash);
+            }
+        }
+
+        public static IEnumerable<T> DistinctBy<T>(this IEnumerable<T> enumerable, Func<T, object> by)
+        {
+            var keys = new HashSet<object>();
+            foreach (var value in enumerable)
+            {
+                if (keys.Add(by(value))) yield return value;
             }
         }
     }

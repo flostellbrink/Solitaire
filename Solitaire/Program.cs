@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Solitaire.Game;
 
@@ -9,21 +8,89 @@ namespace Solitaire
     {
         public static void Main(string[] args)
         {
-            SolveRandom();
+            Console.WriteLine(@" _______  _____         _____ _______ _______ _____  ______ _______");
+            Console.WriteLine(@" |______ |     | |        |      |    |_____|   |   |_____/ |______");
+            Console.WriteLine(@" ______| |_____| |_____ __|__    |    |     | __|__ |    \_ |______");
+            Console.WriteLine();
+
+            var decision = "(C)reate new game, (B)enchmark solvability"
+                .AskForDecision(ConsoleKey.C, ConsoleKey.B);
+            switch (decision)
+            {
+                case ConsoleKey.C:
+                    Console.WriteLine("Creating new game");
+                    Console.WriteLine();
+                    CreateGame();
+                    return;
+                case ConsoleKey.B:
+                    Console.WriteLine("Running benchmark:");
+                    Console.WriteLine();
+                    BenchmarkSolvability();
+                    return;
+                default:
+                    throw new ArgumentException();
+            }
         }
 
-        public static void FindUnsolvable()
+        public static void CreateGame()
+        {
+            var board = CreateBoard();
+            Console.WriteLine(board);
+
+            var decision = "(S)olve automatically, (P)play"
+                .AskForDecision(ConsoleKey.S, ConsoleKey.P);
+            switch (decision)
+            {
+                case ConsoleKey.S:
+                    Console.WriteLine("Solving board automatically");
+                    Console.WriteLine();
+                    Solve(board);
+                    return;
+                case ConsoleKey.P:
+                    Console.WriteLine("Playing game");
+                    Console.WriteLine();
+                    Play(board);
+                    return;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public static Board CreateBoard() {
+            var decision = "(R)andom board, (C)ustom board, (S)eed board"
+                .AskForDecision(ConsoleKey.R, ConsoleKey.C, ConsoleKey.S);
+            switch (decision)
+            {
+                case ConsoleKey.R:
+                    Console.WriteLine("Creating random board");
+                    Console.WriteLine();
+                    return new RandomBoard();
+                case ConsoleKey.C:
+                    Console.WriteLine("Creating custom board");
+                    Console.WriteLine();
+                    return new InteractiveBoard();
+                case ConsoleKey.S:
+                    Console.WriteLine("Creating board from seed");
+                    Console.WriteLine();
+                    return new RandomBoard("Board seed".AskForNumber(0, int.MaxValue));
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public static void BenchmarkSolvability()
         {
             var solved = 0;
             var failed = 0;
             while (true)
             {
-                var board = new Board();
+                var board = new RandomBoard();
                 var solver = new Solver(board);
                 var solution = solver.Solve();
                 if (solution == null)
                 {
-                    Console.WriteLine($"\nFailed to solve");
+                    Console.WriteLine($"\nFailed to solve game with seed {board.Seed}");
+                    Console.WriteLine(new RandomBoard(board.Seed));
                     failed++;
                 }
                 else
@@ -35,16 +102,13 @@ namespace Solitaire
             }
         }
 
-        public static void SolveRandom()
+        private static void Solve(Board board)
         {
-            // We want a completely blank board to replay the history on
-            var board = new Board(applyForcedMoves: false);
-            Console.WriteLine(board);
+            // Create a clone for replay
+            var clone = new Board(board) { ApplyForcedMoves = false };
 
-            // Solve the board on a copy with automatic moves
-            var clone = new Board(board) { ApplyForcedMoves = true };
-            clone.ApplyForcedMove();
-            var solver = new Solver(clone);
+            // Solve the original board
+            var solver = new Solver(board);
             var solution = solver.Solve();
 
             // Replay the solution and count manual moves
@@ -52,42 +116,51 @@ namespace Solitaire
             var index = 0;
             foreach (var move in solution.MoveHistory.Reverse())
             {
-                var translated = move.Clone(board);
+                var translated = move.Clone(clone);
                 var automatic = translated.IsForced();
                 translated.Apply();
 
                 if (!automatic) manualMoves++;
-
-                Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}" +
-                              (automatic ? " (automatic)\n\n" : $"\n\n{board}\n"));
+                Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}");
+                Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{clone}");
             }
 
             Console.WriteLine();
-            Console.WriteLine($"Solution has {solution.MoveHistory.Count} moves, of which {manualMoves} are not automatic.");
+            Console.Write($"Solution has {solution.MoveHistory.Count} moves, ");
+            Console.Write($"of which {manualMoves} are not automatic.");
         }
 
-        public static void RandomGame()
+        private static void Play(Board board)
         {
-            var random = new Random();
-            var board = new Board();
-            var knownBoards = new HashSet<int>();
-
+            board.ApplyForcedMove();
             while (true)
             {
-                if (!knownBoards.Add(board.GetHashCode()))
-                {
-                    Console.WriteLine("Already known board state");
-                    break;
-                }
-
                 Console.WriteLine($"Board ({board.GetHashCode()}):");
                 Console.WriteLine(board);
+                Console.WriteLine();
 
-                var moves = board.AllMoves.ToList();
-                if (!moves.Any()) break;
+                if (board.Solved)
+                {
+                    Console.WriteLine("You solved it! Just imagine the win animation :)");
+                    return;
+                }
+                
+                var moves = board.DistinctMoves.ToList();
+                if (!moves.Any())
+                {
+                    Console.WriteLine("No moves left, you lose.");
+                    return;
+                }
 
-                var selectedMove = moves[random.Next(moves.Count)];
-                Console.WriteLine("Selected move: " + selectedMove);
+                Console.WriteLine("Distinct valid moves:");
+                Console.WriteLine(string.Join(
+                    "\n", 
+                    moves.Select((move, index) => $"{index + 1, 2}: {move}")));
+                Console.WriteLine();
+
+                var decision = "Chose your move".AskForNumber(1, moves.Count);
+                var selectedMove = moves[decision - 1];
+                Console.WriteLine($"Selected move: {selectedMove}");
                 Console.WriteLine();
 
                 selectedMove.Apply();

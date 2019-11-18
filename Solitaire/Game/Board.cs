@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -26,29 +25,12 @@ namespace Solitaire.Game
         private readonly ICollection<FilingStack> _filingStacks =
             Card.BaseColors.Select(color => new FilingStack(color)).ToList();
 
-        private readonly ICollection<Stack> _stacks =
+        private protected readonly ICollection<Stack> _stacks =
             Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
 
-        public Board(bool applyForcedMoves = true, bool debugOutput = true)
+        protected Board(bool applyForcedMoves = true)
         {
             ApplyForcedMoves = applyForcedMoves;
-
-            var seed = Environment.TickCount;
-            if (debugOutput)
-            {
-                Console.WriteLine($"Seed: {seed}");
-            }
-
-            var random = new Random(seed);
-            var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
-
-            var stackIndex = 0;
-            foreach (var card in deck)
-            {
-                _stacks.ElementAt(stackIndex++ % _stacks.Count).Cards.Add(card);
-            }
-
-            ApplyForcedMove();
         }
 
         public Board(Board board)
@@ -91,6 +73,14 @@ namespace Solitaire.Game
             .Where(move => move.Sources.Count == SymbolsPerColor && move.Destination != null);
 
         public IEnumerable<IMove> AllMoves => Enumerable.Empty<IMove>().Concat(AllStandardMoves).Concat(AllLockMoves);
+
+        // Moves that create distinct boards (e.g. no difference onto which empty stack a card is moved)
+        public IEnumerable<IMove> DistinctMoves => AllMoves.DistinctBy(move =>
+        {
+            var clone = new Board(this);
+            move.Clone(clone).Apply();
+            return clone.GetHashCode();
+        });
 
         public Value HighestAutomaticFilingValue => _filingStacks.Min(filing => filing.NextIndex + 1);
 

@@ -44,6 +44,7 @@ namespace Solitaire
 
         public Solver(Board board)
         {
+            board.ApplyForcedMove();
             Board = board;
             AddToFrontier(board);
         }
