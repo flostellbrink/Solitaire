@@ -49,20 +49,19 @@ namespace Solitaire
             AddToFrontier(board);
         }
 
-        public Board Solve(bool debugOutput = true)
+        public Board Solve()
         {
             while (true)
             {
                 var currentBoard = GetFromFrontier();
+                Console.Write("\r".PadRight(Console.WindowWidth));
+                Console.Write("\r");
+
                 if (currentBoard == null) return null;
-
-                if (debugOutput)
-                {
-                    Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)} \r");
-                }
-
                 if(!VisitedBoards.Add(currentBoard.GetHashCode())) continue;
                 if (currentBoard.Solved) return currentBoard;
+
+                Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)}");
 
                 foreach (var move in currentBoard.AllMoves.ToList())
                 {
