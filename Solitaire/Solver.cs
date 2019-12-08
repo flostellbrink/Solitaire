@@ -18,28 +18,32 @@ namespace Solitaire
         private void AddToFrontier(Board board)
         {
             var hash = board.GetHashCode();
-            if (VisitedBoards.Contains(hash) || InFrontier.Contains(hash)) return;
-            InFrontier.Add(hash);
             var loss = board.Loss;
-            if (Frontier.ContainsKey(loss))
-                Frontier[loss].Add(board);
-            else
-                Frontier.Add(loss, new List<Board> {board});
-        }
 
-        private Board GetFromFrontier()
-        {
-            if (Frontier.Count == 0) return null;
-            var (key, value) = Frontier.First();
-
-            var result = value.First();
-            value.Remove(result);
-            if (!value.Any())
+            lock (VisitedBoards)
             {
-                Frontier.Remove(key);
+                if (VisitedBoards.Contains(hash)) return;
             }
 
-            return result;
+            lock (Frontier)
+            {
+                if (!InFrontier.Add(hash)) return;
+                if (Frontier.ContainsKey(loss))
+                    Frontier[loss].Add(board);
+                else
+                    Frontier.Add(loss, new List<Board> {board});
+            }
+        }
+
+        private IEnumerable<Board> GetFromFrontier()
+        {
+            lock (Frontier)
+            {
+                if (Frontier.Count == 0) return null;
+                var (key, value) = Frontier.First();
+                Frontier.Remove(key);
+                return value;
+            }
         }
 
         public Solver(Board board)
@@ -53,23 +57,37 @@ namespace Solitaire
         {
             while (true)
             {
-                var currentBoard = GetFromFrontier();
-                Console.Write("\r".PadRight(Console.WindowWidth));
-                Console.Write("\r");
+                Console.Write("\r".PadRight(Console.WindowWidth) + "\r");
 
-                if (currentBoard == null) return null;
-                if(!VisitedBoards.Add(currentBoard.GetHashCode())) continue;
-                if (currentBoard.Solved) return currentBoard;
+                Console.Write($"Visited: {VisitedBoards.Count}, Active: {Frontier.Values.Sum(v => v.Count)}");
 
-                Console.Write($"Current Loss (Smaller is better): {currentBoard.Loss}, visited: {VisitedBoards.Count}, active: {Frontier.Values.Sum(v => v.Count)}");
+                var boards = GetFromFrontier();
+                if (boards == null) return null;
 
-                foreach (var move in currentBoard.AllMoves.ToList())
-                {
-                    var clone = new Board(currentBoard);
-                    move.Clone(clone).Apply();
-                    AddToFrontier(clone);
-                }
+                var solution = boards.AsParallel().Select(Solve)
+                    .FirstOrDefault(board => board != null);
+                if (solution != null) return solution;
             }
+        }
+
+        private Board Solve(Board board)
+        {
+            if (board == null) return null;
+            if (board.Solved) return board;
+
+            lock (VisitedBoards)
+            {
+                if (!VisitedBoards.Add(board.GetHashCode())) return null;
+            }
+
+            foreach (var move in board.AllMoves.ToList())
+            {
+                var clone = new Board(board);
+                move.Clone(clone).Apply();
+                AddToFrontier(clone);
+            }
+
+            return null;
         }
     }
 }
