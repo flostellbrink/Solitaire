@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using SixLabors.ImageSharp;
@@ -6,6 +7,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Solitaire;
 using Solitaire.Game;
+using Color = Solitaire.Game.Color;
 
 namespace Server
 {
@@ -123,7 +125,6 @@ namespace Server
             var lockableXs = Enumerable.Range(0, 3).Select(i => lockableStart.X + i * cardStep.X).ToArray();
             var lockablePositions = lockableXs.Select(x => new Vector2(x, lockableStart.Y)).ToArray();
 
-            // TODO Add proper x value
             var flowerPosition = new Vector2(640, lockableStart.Y);
 
             var filingXs = Enumerable.Range(5, 3).Select(i => lockableStart.X + i * cardStep.X).ToArray();
@@ -131,6 +132,7 @@ namespace Server
 
             var expectedEdgeColor = AsColor(0xD2D5CA);
             var expectedCardColor = AsColor(0xC1C2B4);
+            var expectedLockedColor = AsColor(0x587569);
 
             for (var i = 0; i < stacksPositions.Length; i++)
             {
@@ -147,19 +149,20 @@ namespace Server
             for (var i = 0; i < lockablePositions.Length; i++)
             {
                 var lockablePosition = lockablePositions[i];
+
                 var cardColor = PixelAt(lockablePosition);
-                if (!SimilarColor(cardColor, expectedCardColor)) continue;
+                if (SimilarColor(cardColor, expectedCardColor))
+                    LockableStacks.ElementAt(i).Cards.Add(ClosestCard(lockablePosition));
 
-                LockableStacks.ElementAt(i).Cards.Add(ClosestCard(lockablePosition));
-
-                // TODO detect locked stacks
-                // Mark them as locked, assign colors later
+                var lockedColor = PixelAt(lockablePosition + new Vector2(4, 4));
+                if (SimilarColor(lockedColor, expectedLockedColor))
+                    LockableStacks.ElementAt(i).Locked = true;
             }
 
             {
                 var cardColor = PixelAt(flowerPosition);
                 if (SimilarColor(cardColor, expectedCardColor))
-                    FlowerStack.Cards.Add(new Card(Solitaire.Game.Color.Flower, Value.Flower));
+                    FlowerStack.Cards.Add(new Card(Color.Flower, Value.Flower));
             }
 
             for (var i = 0; i < filingPositions.Length; i++)
@@ -173,10 +176,21 @@ namespace Server
                     FilingStacks.ElementAt(i).Cards.Add(new Card(card.Color, value));
             }
 
-            // TODO Iterate through colors
-            {
-                // If all dragons are missing assign them to an uncolored locked stack
-            }
+            var allDragons = Stacks.SelectMany(stack => stack.Cards)
+                .Concat(LockableStacks.SelectMany(stack => stack.Cards))
+                .Where(card => card.Value == Value.Dragon)
+                .ToList();
+            var colorsWithMissingDragons = new List<Color> { Color.Red, Color.Green, Color.Black }
+                .Where(color => allDragons.All(dragon => dragon.Color != color))
+                .ToList();
+            var lockedStacks = LockableStacks.Where(stack => stack.Locked).ToList();
+
+            if (colorsWithMissingDragons.Count != lockedStacks.Count)
+                throw new Exception("Missing dragons don't match locked stacks");
+
+            foreach (var (color, stack) in colorsWithMissingDragons.Zip(lockedStacks))
+            foreach (var _ in Enumerable.Range(0, 4))
+                stack.Cards.Add(new Card(color, Value.Dragon));
         }
     }
 }
