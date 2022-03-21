@@ -10,10 +10,10 @@ namespace Solitaire.Game
             Enum.GetValues(typeof(Color)).Cast<Color>().ToArray();
 
         private static readonly Value[] Values =
-            Enum.GetValues(typeof(Value)).Cast<Value>().Except(new[] {Value.None, Value.Flower}).ToArray();
+            Enum.GetValues(typeof(Value)).Cast<Value>().Except(new[] { Value.None, Value.Flower }).ToArray();
 
         private static readonly Value[] NumericValuesAndNone =
-            {Value.None, Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9};
+            { Value.None, Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9 };
 
         public CustomBoard(bool applyForcedMoves = true) : base(applyForcedMoves)
         {
@@ -22,8 +22,8 @@ namespace Solitaire.Game
 
             PopulateFlower(FlowerStack);
 
-            foreach (var filingStack in FilingStacks)
-                PopulateFiling(filingStack);
+            for (var i = 0; i < 4; i++)
+                PopulateFiling(FilingStacks.ElementAt(i), Color.Black + i);
 
             foreach (var stack in Stacks)
                 PopulateStack(stack);
@@ -44,6 +44,7 @@ namespace Solitaire.Game
                 var card = AskForCard();
                 if (card != null) stack.Cards.Add(Print(card));
             }
+
             Console.WriteLine();
         }
 
@@ -55,13 +56,13 @@ namespace Solitaire.Game
             Console.WriteLine();
         }
 
-        private static void PopulateFiling(FilingStack stack)
+        private static void PopulateFiling(FilingStack stack, Color color)
         {
             Console.WriteLine($"Cards for {stack}");
-            var value = $"What is the highest value of {stack} {{0}}".AskForDecision(NumericValuesAndNone);
+            var value = $"What is the highest value of {stack} {color} {{0}}".AskForDecision(NumericValuesAndNone);
 
             foreach (var numeric in Card.NumericValues.TakeWhile(numeric => numeric <= value))
-                stack.Cards.Add(Print(new Card(stack.Color, numeric)));
+                stack.Cards.Add(Print(new Card(color, numeric)));
             Console.WriteLine();
         }
 
@@ -74,6 +75,7 @@ namespace Solitaire.Game
                 if (card == null) break;
                 stack.Cards.Add(Print(card));
             }
+
             Console.WriteLine();
         }
 

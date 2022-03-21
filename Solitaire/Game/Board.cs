@@ -24,7 +24,7 @@ namespace Solitaire.Game
         protected readonly FlowerStack FlowerStack = new FlowerStack();
 
         protected readonly ICollection<FilingStack> FilingStacks =
-            Card.BaseColors.Select(color => new FilingStack(color)).ToList();
+            Card.BaseColors.Select((_, index) => new FilingStack(index)).ToList();
 
         protected readonly ICollection<Stack> Stacks =
             Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
@@ -55,11 +55,13 @@ namespace Solitaire.Game
 
             var missingCards = Card.FullSet.ExceptQuantitative(cardsOnBoard).ToList();
             if (missingCards.Any())
-                Console.Error.WriteLine($"The following cards are missing on this board: {string.Join(", ", missingCards)}");
+                Console.Error.WriteLine(
+                    $"The following cards are missing on this board: {string.Join(", ", missingCards)}");
 
             var extraCards = cardsOnBoard.ExceptQuantitative(Card.FullSet).ToList();
             if (extraCards.Any())
-                Console.Error.WriteLine($"The following cards should not be on this board: {string.Join(", ", missingCards)}");
+                Console.Error.WriteLine(
+                    $"The following cards should not be on this board: {string.Join(", ", missingCards)}");
 
             return !extraCards.Any() && !missingCards.Any();
         }
@@ -82,11 +84,12 @@ namespace Solitaire.Game
                     .Select(destination => new Move(this, source, destination, unit))));
 
         private IEnumerable<LockMove> AllLockMoves => Card.BaseColors
-            .Select(color => new Unit(new[] {new Card(color, Value.Dragon)}))
+            .Select(color => new Unit(new[] { new Card(color, Value.Dragon) }))
             .Select(unit => new LockMove(
                 this,
                 AllStacks.Where(stack => stack.MovableCards.Contains(unit)).ToList(),
-                LockableStacks.FirstOrDefault(lockable => lockable.Accepts(unit) || lockable.MovableCards.Contains(unit)),
+                LockableStacks.FirstOrDefault(
+                    lockable => lockable.Accepts(unit) || lockable.MovableCards.Contains(unit)),
                 unit))
             .Where(move => move.Sources.Count == SymbolsPerColor && move.Destination != null);
 

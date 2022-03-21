@@ -6,16 +6,16 @@ namespace Solitaire.Stacks
 {
     public class FilingStack : AbstractStack
     {
-        public Color Color { get; }
+        private readonly int _index;
 
-        public FilingStack(Color color)
+        public FilingStack(int index)
         {
-            Color = color;
+            _index = index;
         }
 
         public FilingStack(FilingStack stack) : base(stack)
         {
-            Color = stack.Color;
+            _index = stack._index;
         }
 
         public Value NextIndex => Cards.LastOrDefault()?.Value + 1 ?? Value.N1;
@@ -26,10 +26,11 @@ namespace Solitaire.Stacks
         {
             if (unit.Cards.Count != 1) return false;
             var card = unit.Cards.First();
-            if (card.Color != Color || !Card.NumericValues.Contains(card.Value)) return false;
+            if (Cards.Any() && card.Color != Cards.First().Color) return false;
+            if (!Card.NumericValues.Contains(card.Value)) return false;
             return card.Value == NextIndex;
         }
 
-        public override string ToString() => $"Filing {Color}";
+        public override string ToString() => $"Filing {_index}";
     }
 }
