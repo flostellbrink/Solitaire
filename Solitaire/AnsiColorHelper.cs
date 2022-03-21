@@ -29,10 +29,12 @@ namespace Solitaire
 
     public static class AnsiColorHelper
     {
+        public static bool Enabled = true;
+
         public static string AnsiColorEscapeCode(this AnsiColor color) => $"\u001b[{(int)color}m";
 
         public static string Colorize(this string value, AnsiColor color) =>
-            $"{color.AnsiColorEscapeCode()}{value}{AnsiColor.None.AnsiColorEscapeCode()}";
+            Enabled ? $"{color.AnsiColorEscapeCode()}{value}{AnsiColor.None.AnsiColorEscapeCode()}" : value;
 
         private static readonly Regex AnsiRegex = new Regex("\u001b[^m]+m", RegexOptions.Compiled);
 
@@ -42,14 +44,10 @@ namespace Solitaire
         public static string PadRightAnsi(this string value, int totalWidth) =>
             value.PadRight(totalWidth + value.AnsiInvisibleLength());
 
-        public static StringBuilder EndColor(this StringBuilder builder)
-        {
-            return builder.BeginColor(AnsiColor.None);
-        }
+        public static StringBuilder EndColor(this StringBuilder builder) =>
+            Enabled ? builder.BeginColor(AnsiColor.None) : builder;
 
-        public static StringBuilder BeginColor(this StringBuilder builder, AnsiColor color)
-        {
-            return builder.Append(color.AnsiColorEscapeCode());
-        }
+        public static StringBuilder BeginColor(this StringBuilder builder, AnsiColor color) =>
+            Enabled ? builder.Append(color.AnsiColorEscapeCode()) : builder;
     }
 }
