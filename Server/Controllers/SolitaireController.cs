@@ -20,28 +20,17 @@ namespace Server.Controllers
             using var image = Image.Load<Rgba32>(file.OpenReadStream());
 
             var board = new ImageBoard(image);
-            if (!board.IsValid())
-            {
-                return "Sorry cannot read this board.";
-            }
-
             Console.WriteLine(board.ToString());
+            if (board.Solved) return "Good job!";
+            if (!board.IsValid()) return "Sorry cannot read this board.";
 
             var solver = new Solver(board);
             var solution = solver.Solve();
             Console.WriteLine();
-
-            if (solution == null)
-            {
-                return "Looks like you're stuck!";
-            }
+            if (solution == null) return "Looks like you're stuck!";
 
             var nextMove = solution.MoveHistory.LastOrDefault();
-            if (nextMove == null)
-            {
-                return "Good job!";
-            }
-
+            if (nextMove == null) return "Good job!";
             Console.WriteLine(nextMove);
             return nextMove.ToString();
         }

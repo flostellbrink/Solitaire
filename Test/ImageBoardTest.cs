@@ -63,12 +63,20 @@ namespace Test
         [InlineData("32")]
         [InlineData("33")]
         [InlineData("34")]
-        [InlineData("35")]
         public void ParsesValidBoard(string imageName)
         {
             var board = new ImageBoard(LoadImage(imageName));
             _output.WriteLine(board.ToString());
             Assert.True(board.IsValid());
+        }
+
+        [Theory]
+        [InlineData("35")]
+        public void ParsesSolvedBoard(string imageName)
+        {
+            var board = new ImageBoard(LoadImage(imageName));
+            _output.WriteLine(board.ToString());
+            Assert.True(board.Solved);
         }
 
         [Fact]

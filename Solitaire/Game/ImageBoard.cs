@@ -176,6 +176,8 @@ namespace Server
                     FilingStacks.ElementAt(i).Cards.Add(new Card(card.Color, value));
             }
 
+            if (Solved) return;
+
             var allDragons = Stacks.SelectMany(stack => stack.Cards)
                 .Concat(LockableStacks.SelectMany(stack => stack.Cards))
                 .Where(card => card.Value == Value.Dragon)
