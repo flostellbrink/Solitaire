@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Solitaire;
-using Solitaire.Game;
 
 namespace Server.Controllers
 {
@@ -30,6 +25,8 @@ namespace Server.Controllers
                 return "Sorry cannot read this board.";
             }
 
+            Console.WriteLine(board.ToString());
+
             var solver = new Solver(board);
             var solution = solver.Solve();
             Console.WriteLine();
@@ -45,6 +42,7 @@ namespace Server.Controllers
                 return "Good job!";
             }
 
+            Console.WriteLine(nextMove);
             return nextMove.ToString();
         }
     }
