@@ -13,8 +13,6 @@ namespace Server
     {
         public ImageBoard(Image<Rgba32> image)
         {
-            image.Save("original.png");
-
             // Extract board
             image.Mutate(context =>
             {
@@ -115,7 +113,7 @@ namespace Server
             }
 
             var stackStart = new Vector2(67, 358);
-            var lockableStart = new Vector2(67, 100);
+            var lockableStart = new Vector2(67, 99);
             var cardStep = new Vector2(148.8f, 29);
 
             var stackXs = Enumerable.Range(0, 8).Select(i => stackStart.X + i * cardStep.X).ToArray();
