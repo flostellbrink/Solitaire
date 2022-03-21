@@ -61,7 +61,7 @@ namespace Solitaire.Game
             var extraCards = cardsOnBoard.ExceptQuantitative(Card.FullSet).ToList();
             if (extraCards.Any())
                 Console.Error.WriteLine(
-                    $"The following cards should not be on this board: {string.Join(", ", missingCards)}");
+                    $"The following cards should not be on this board: {string.Join(", ", extraCards)}");
 
             return !extraCards.Any() && !missingCards.Any();
         }
