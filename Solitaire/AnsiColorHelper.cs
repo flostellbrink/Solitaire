@@ -36,7 +36,7 @@ namespace Solitaire
         public static string Colorize(this string value, AnsiColor color) =>
             Enabled ? $"{color.AnsiColorEscapeCode()}{value}{AnsiColor.None.AnsiColorEscapeCode()}" : value;
 
-        private static readonly Regex AnsiRegex = new Regex("\u001b[^m]+m", RegexOptions.Compiled);
+        private static readonly Regex AnsiRegex = new("\u001b[^m]+m", RegexOptions.Compiled);
 
         public static int AnsiInvisibleLength(this string value) =>
             AnsiRegex.Matches(value).Sum(match => match.Length);

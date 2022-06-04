@@ -24,7 +24,7 @@ namespace Server.Controllers
             if (board.Solved) return "Good job!";
             if (!board.IsValid()) return "Sorry cannot read this board.";
 
-            var solver = new Solver(board);
+            var solver = new Solver(board, Solver.Mode.Normal);
             var solution = solver.Solve();
             Console.WriteLine();
             if (solution == null) return "Looks like you're stuck!";

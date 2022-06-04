@@ -7,13 +7,19 @@ namespace Solitaire
 {
     public class Solver
     {
-        public Board Board { get; }
+        public enum Mode
+        {
+            Normal,
+            Hard,
+        }
 
-        private HashSet<int> VisitedBoards { get; } = new HashSet<int>();
+        private HashSet<int> VisitedBoards { get; } = new();
 
-        private HashSet<int> InFrontier { get; } = new HashSet<int>();
+        private HashSet<int> InFrontier { get; } = new();
 
-        private SortedList<int, List<Board>> Frontier { get; } = new SortedList<int, List<Board>>();
+        private SortedList<int, List<Board>> Frontier { get; } = new();
+
+        private Mode mode;
 
         private void AddToFrontier(Board board)
         {
@@ -31,7 +37,7 @@ namespace Solitaire
                 if (Frontier.ContainsKey(loss))
                     Frontier[loss].Add(board);
                 else
-                    Frontier.Add(loss, new List<Board> {board});
+                    Frontier.Add(loss, new List<Board> { board });
             }
         }
 
@@ -46,10 +52,13 @@ namespace Solitaire
             }
         }
 
-        public Solver(Board board)
+        public Solver(Board board, Mode mode)
         {
+            this.mode = mode;
+
             board.ApplyForcedMove();
-            Board = board;
+            if (mode == Mode.Hard && !board.HardModeSolvable) return;
+
             AddToFrontier(board);
         }
 
@@ -72,7 +81,7 @@ namespace Solitaire
 
         private Board Solve(Board board)
         {
-            if (board == null) return null;
+            if (mode == Mode.Hard && !board.HardModeValid) return null;
             if (board.Solved) return board;
 
             lock (VisitedBoards)
@@ -80,7 +89,7 @@ namespace Solitaire
                 if (!VisitedBoards.Add(board.GetHashCode())) return null;
             }
 
-            foreach (var move in board.AllMoves.ToList())
+            foreach (var move in board.AllMoves)
             {
                 var clone = new Board(board);
                 move.Clone(clone).Apply();

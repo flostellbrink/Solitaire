@@ -14,8 +14,9 @@ namespace Solitaire
             Console.WriteLine();
 
             const string createGame = "Create new game";
-            const string benchmark = "Benchmark solvability";
-            var decision = "{0}".AskForDecision(createGame, benchmark);
+            const string benchmarkNormal = "Benchmark solvability";
+            const string benchmarkHard = "Hard mode benchmark";
+            var decision = "{0}".AskForDecision(createGame, benchmarkNormal, benchmarkHard);
             switch (decision)
             {
                 case createGame:
@@ -23,17 +24,22 @@ namespace Solitaire
                     Console.WriteLine();
                     CreateGame();
                     return;
-                case benchmark:
+                case benchmarkNormal:
                     Console.WriteLine("Running benchmark:");
                     Console.WriteLine();
-                    BenchmarkSolvability();
+                    BenchmarkSolvability(Solver.Mode.Normal);
+                    return;
+                case benchmarkHard:
+                    Console.WriteLine("Running benchmark:");
+                    Console.WriteLine();
+                    BenchmarkSolvability(Solver.Mode.Hard);
                     return;
                 default:
                     throw new ArgumentException();
             }
         }
 
-        public static void CreateGame()
+        private static void CreateGame()
         {
             Board board;
             while (true)
@@ -55,7 +61,7 @@ namespace Solitaire
                 case solve:
                     Console.WriteLine("Solving board automatically");
                     Console.WriteLine();
-                    Solve(board);
+                    Solve(board, Solver.Mode.Normal);
                     return;
                 case play:
                     Console.WriteLine("Playing game");
@@ -67,7 +73,7 @@ namespace Solitaire
             }
         }
 
-        public static Board CreateBoard()
+        private static Board CreateBoard()
         {
             const string random = "Random board";
             const string custom = "Custom board";
@@ -92,19 +98,18 @@ namespace Solitaire
             }
         }
 
-        public static void BenchmarkSolvability()
+        private static void BenchmarkSolvability(Solver.Mode mode)
         {
             var solved = 0;
             var failed = 0;
             while (true)
             {
                 var board = new RandomBoard();
-                var solver = new Solver(board);
+                var solver = new Solver(board, mode);
                 var solution = solver.Solve();
                 if (solution == null)
                 {
                     Console.WriteLine($"\nFailed to solve game with seed {board.Seed}");
-                    Console.WriteLine(new RandomBoard(board.Seed));
                     failed++;
                 }
                 else
@@ -112,17 +117,19 @@ namespace Solitaire
                     Console.WriteLine($"\nSolved. Solution contains {solution.MoveHistory.Count} steps total.");
                     solved++;
                 }
-                Console.WriteLine($"Solve rate: {(double)solved/(solved+failed):P}, solved: {solved}, failed: {failed}");
+
+                Console.WriteLine(
+                    $"Solve rate: {(double)solved / (solved + failed):P}, solved: {solved}, failed: {failed}");
             }
         }
 
-        private static void Solve(Board board)
+        private static void Solve(Board board, Solver.Mode mode)
         {
             // Create a clone for replay
             var clone = new Board(board) { ApplyForcedMoves = false };
 
             // Solve the original board
-            var solver = new Solver(board);
+            var solver = new Solver(board, mode);
             var solution = solver.Solve();
             if (solution == null)
             {
@@ -158,10 +165,11 @@ namespace Solitaire
 
                 if (board.Solved)
                 {
-                    Console.WriteLine("Congratulations, you solved the puzzle! You'll have to imagine the animation for now ;)");
+                    Console.WriteLine(
+                        "Congratulations, you solved the puzzle! You'll have to imagine the animation for now ;)");
                     return;
                 }
-                
+
                 var moves = board.DistinctMoves.ToArray();
                 if (!moves.Any())
                 {

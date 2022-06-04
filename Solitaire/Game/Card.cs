@@ -53,8 +53,7 @@ namespace Solitaire.Game
             .Concat(BaseColors.SelectMany(color => Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Dragon))))
             .Append(new Card(Color.Flower, Value.Flower));
 
-        internal static HashSet<Value> NumericValues = new HashSet<Value>
-            { Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9 };
+        internal static HashSet<Value> NumericValues = new() { Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9 };
 
         public bool CanHold(Card other)
         {
@@ -86,7 +85,7 @@ namespace Solitaire.Game
             }
         }
 
-        private static readonly Dictionary<Color, AnsiColor> AnsiColors = new Dictionary<Color, AnsiColor>
+        private static readonly Dictionary<Color, AnsiColor> AnsiColors = new()
         {
             { Color.Black, AnsiColor.None },
             { Color.Red, AnsiColor.ForegroundRed },

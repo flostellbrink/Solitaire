@@ -7,7 +7,7 @@ namespace Solitaire.Stacks
 {
     public abstract class AbstractStack : IStack
     {
-        internal readonly List<Card> Cards = new List<Card>();
+        internal readonly List<Card> Cards = new();
 
         public abstract IEnumerable<Unit> MovableCards { get; }
 

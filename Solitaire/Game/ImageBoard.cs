@@ -63,7 +63,7 @@ namespace Server
             var pixelArray = new Rgba32[image.Width * image.Height];
             image.CopyPixelDataTo(pixelArray);
             Rgba32 PixelAt(Vector2 position) => pixelArray[(int)position.Y * image.Width + (int)position.X];
-            Rgba32 AsColor(long hex) => new Rgba32((byte)(hex >> 16), (byte)(hex >> 8), (byte)hex);
+            Rgba32 AsColor(long hex) => new((byte)(hex >> 16), (byte)(hex >> 8), (byte)hex);
 
             Image<Rgba32> SubImage(Vector2 position, Vector2 size)
             {

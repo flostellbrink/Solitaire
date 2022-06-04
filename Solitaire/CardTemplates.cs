@@ -8,7 +8,7 @@ namespace Solitaire
 {
     public static class CardTemplates
     {
-        public static List<(Card, Image<Rgba32>)> Templates = new List<(Card, Image<Rgba32>)>
+        public static List<(Card, Image<Rgba32>)> Templates = new()
         {
             (new Card(Color.Red, Value.N9),
                 Image.LoadPixelData<Rgba32>(

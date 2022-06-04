@@ -22,7 +22,7 @@ namespace Solitaire.Game
 
             PopulateFlower(FlowerStack);
 
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 3; i++)
                 PopulateFiling(FilingStacks.ElementAt(i), Color.Black + i);
 
             foreach (var stack in Stacks)

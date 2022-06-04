@@ -16,12 +16,12 @@ namespace Solitaire.Game
 
         public bool ApplyForcedMoves;
 
-        public Stack<IMove> MoveHistory = new Stack<IMove>();
+        public Stack<IMove> MoveHistory = new();
 
         protected readonly ICollection<LockableStack> LockableStacks =
             Card.BaseColors.Select((_, index) => new LockableStack(index + 1)).ToList();
 
-        protected readonly FlowerStack FlowerStack = new FlowerStack();
+        protected readonly FlowerStack FlowerStack = new();
 
         protected readonly ICollection<FilingStack> FilingStacks =
             Card.BaseColors.Select((_, index) => new FilingStack(index)).ToList();
@@ -46,6 +46,14 @@ namespace Solitaire.Game
         }
 
         public bool Solved => Stacks.All(stack => !stack.Cards.Any());
+
+        public bool HardModeValid => FilingStacks.All(stack => !stack.Cards.Any()) || Solved;
+
+        public bool HardModeSolvable =>
+            Stacks.All(stack => stack.Cards
+                .SkipWhile(card => card.Value == Value.Flower || card.Value == Value.N1)
+                .All(card => card.Value != Value.N1)) ||
+            Solved;
 
         public bool IsValid()
         {

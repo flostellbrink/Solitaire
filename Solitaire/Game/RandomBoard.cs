@@ -10,7 +10,6 @@ namespace Solitaire.Game
         public RandomBoard(int? seed = null) : base(true)
         {
             Seed = seed ?? Environment.TickCount;
-            Console.WriteLine($"Random board based on seed: {Seed}");
 
             var random = new Random(Seed);
             var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
@@ -20,6 +19,9 @@ namespace Solitaire.Game
             {
                 Stacks.ElementAt(stackIndex++ % Stacks.Count).Cards.Add(card);
             }
+
+            Console.WriteLine($"Random board based on seed: {Seed}");
+            Console.WriteLine(this);
         }
     }
 }
