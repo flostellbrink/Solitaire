@@ -57,8 +57,6 @@ namespace Solitaire
             this.mode = mode;
 
             board.ApplyForcedMove();
-            if (mode == Mode.Hard && !board.HardModeSolvable) return;
-
             AddToFrontier(board);
         }
 

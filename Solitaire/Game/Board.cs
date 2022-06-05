@@ -49,12 +49,6 @@ namespace Solitaire.Game
 
         public bool HardModeValid => FilingStacks.All(stack => !stack.Cards.Any()) || Solved;
 
-        public bool HardModeSolvable =>
-            Stacks.All(stack => stack.Cards
-                .SkipWhile(card => card.Value == Value.Flower || card.Value == Value.N1)
-                .All(card => card.Value != Value.N1)) ||
-            Solved;
-
         public bool IsValid()
         {
             var abstractStacks = Enumerable.Empty<AbstractStack>()
