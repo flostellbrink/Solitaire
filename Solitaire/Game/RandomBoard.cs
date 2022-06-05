@@ -7,7 +7,7 @@ namespace Solitaire.Game
     {
         public int Seed { get; }
 
-        public RandomBoard(int? seed = null) : base(true)
+        public RandomBoard(int? seed = null)
         {
             Seed = seed ?? Environment.TickCount;
 

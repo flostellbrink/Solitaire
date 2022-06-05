@@ -29,7 +29,8 @@ namespace Solitaire.Moves
             return new LockMove(targetBoard,
                 Sources.Select(mSource =>
                     targetBoard.AllStacks.Single(source => source.ToString() == mSource.ToString())).ToList(),
-                targetBoard.AllStacks.Single(destination => destination.ToString() == Destination.ToString()) as LockableStack,
+                targetBoard.AllStacks.Single(destination => destination.ToString() == Destination.ToString()) as
+                    LockableStack,
                 Unit);
         }
 
@@ -54,7 +55,7 @@ namespace Solitaire.Moves
             Debug.Assert(Destination.Cards.All(card => card.Value == Value.Dragon));
 
             Board.MoveHistory.Push(this);
-            Board.ApplyForcedMove();
+            Board.ApplyForcedMoves();
         }
 
         public override string ToString()

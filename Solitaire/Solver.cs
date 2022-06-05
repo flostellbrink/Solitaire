@@ -56,7 +56,7 @@ namespace Solitaire
         {
             this.mode = mode;
 
-            board.ApplyForcedMove();
+            board.ApplyForcedMoves();
             AddToFrontier(board);
         }
 

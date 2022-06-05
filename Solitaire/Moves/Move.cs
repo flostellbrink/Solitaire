@@ -51,7 +51,7 @@ namespace Solitaire.Moves
             Destination.Add(Unit);
 
             Board.MoveHistory.Push(this);
-            Board.ApplyForcedMove();
+            Board.ApplyForcedMoves();
         }
 
         public override string ToString()

@@ -126,7 +126,7 @@ namespace Solitaire
         private static void Solve(Board board, Solver.Mode mode)
         {
             // Create a clone for replay
-            var clone = new Board(board) { ApplyForcedMoves = false };
+            var clone = new Board(board);
 
             // Solve the original board
             var solver = new Solver(board, mode);
@@ -157,7 +157,7 @@ namespace Solitaire
 
         private static void Play(Board board)
         {
-            board.ApplyForcedMove();
+            board.ApplyForcedMoves();
             while (true)
             {
                 Console.WriteLine("Current board:");

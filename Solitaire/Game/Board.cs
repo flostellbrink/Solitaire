@@ -14,8 +14,6 @@ namespace Solitaire.Game
 
         internal const int SymbolsPerColor = 4;
 
-        public bool ApplyForcedMoves;
-
         public Stack<IMove> MoveHistory = new();
 
         protected readonly ICollection<LockableStack> LockableStacks =
@@ -29,14 +27,12 @@ namespace Solitaire.Game
         protected readonly ICollection<Stack> Stacks =
             Enumerable.Range(1, StackCount).Select(index => new Stack(index)).ToList();
 
-        protected Board(bool applyForcedMoves = true)
+        protected Board()
         {
-            ApplyForcedMoves = applyForcedMoves;
         }
 
         public Board(Board board)
         {
-            ApplyForcedMoves = board.ApplyForcedMoves;
             MoveHistory = new Stack<IMove>(board.MoveHistory.Reverse());
             LockableStacks = board.LockableStacks.Select(lockable => new LockableStack(lockable)).ToList();
             FlowerStack = new FlowerStack(board.FlowerStack);
@@ -107,11 +103,10 @@ namespace Solitaire.Game
 
         public Value HighestAutomaticFilingValue => FilingStacks.Min(filing => filing.NextIndex + 1);
 
-        public void ApplyForcedMove()
+        public void ApplyForcedMoves()
         {
-            if (!ApplyForcedMoves) return;
-            var forcedMove = AllMoves.FirstOrDefault(move => move.IsForced());
-            forcedMove?.Apply();
+            while (AllMoves.FirstOrDefault(move => move.IsForced()) is { } forcedMove)
+                forcedMove.Apply();
         }
 
         public override string ToString()
