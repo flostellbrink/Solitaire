@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Solitaire.Game;
+using Core.Game;
 
-namespace Solitaire.Stacks
+namespace Core.Stacks
 {
     public interface IStack
     {

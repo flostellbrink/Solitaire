@@ -1,6 +1,6 @@
-﻿using Solitaire.Game;
+﻿using Core.Game;
 
-namespace Solitaire.Moves
+namespace Core.Moves
 {
     public interface IMove
     {

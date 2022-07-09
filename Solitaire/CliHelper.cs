@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Core;
 
 namespace Solitaire
 {
@@ -59,10 +60,11 @@ namespace Solitaire
                 while (true)
                 {
                     var key = Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.Enter || key.Key == ConsoleKey.Escape) break; ;
+                    if (key.Key == ConsoleKey.Enter || key.Key == ConsoleKey.Escape) break;
                     line += key.KeyChar;
                     Console.Write(key.KeyChar);
                 }
+
                 Console.Write("\r".PadRight(Console.WindowWidth));
                 Console.Write("\r");
                 if (int.TryParse(line, out var index) && index >= min && index <= max) return index;

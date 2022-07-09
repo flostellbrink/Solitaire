@@ -1,6 +1,6 @@
 using System.Linq;
-using Solitaire;
-using Solitaire.Game;
+using Core;
+using Core.Game;
 using Xunit;
 
 namespace Test

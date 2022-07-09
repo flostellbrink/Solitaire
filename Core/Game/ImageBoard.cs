@@ -5,11 +5,8 @@ using System.Numerics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Solitaire;
-using Solitaire.Game;
-using Color = Solitaire.Game.Color;
 
-namespace Server
+namespace Core.Game
 {
     public class ImageBoard : Board
     {

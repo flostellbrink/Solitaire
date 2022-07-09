@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using Server;
+using Core;
+using Core.Game;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Solitaire;
-using Solitaire.Game;
 using Xunit;
 using Xunit.Abstractions;
-using Color = Solitaire.Game.Color;
+using Color = Core.Game.Color;
 
 namespace Test
 {

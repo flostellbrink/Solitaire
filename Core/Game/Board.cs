@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Solitaire.Moves;
-using Solitaire.Stacks;
+using Core.Moves;
+using Core.Stacks;
 
-namespace Solitaire.Game
+namespace Core.Game
 {
     public class Board
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Solitaire.Game;
-using Solitaire.Stacks;
+using Core.Game;
+using Core.Stacks;
 
-namespace Solitaire.Moves
+namespace Core.Moves
 {
     internal class LockMove : IMove
     {

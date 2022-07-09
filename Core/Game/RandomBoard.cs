@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Solitaire.Game
+namespace Core.Game
 {
     public class RandomBoard : Board
     {

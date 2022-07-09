@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Solitaire
+namespace Core
 {
     public enum AnsiColor
     {

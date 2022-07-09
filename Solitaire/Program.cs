@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Solitaire.Game;
+using Core;
+using Core.Game;
 
 namespace Solitaire
 {

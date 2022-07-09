@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Solitaire.Game
+namespace Core.Game
 {
     public enum Color
     {
@@ -42,7 +42,7 @@ namespace Solitaire.Game
             Value = value;
         }
 
-        internal static readonly Color[] BaseColors =
+        public static readonly Color[] BaseColors =
             { Color.Black, Color.Green, Color.Red };
 
         internal static readonly Value[] BaseValues =
@@ -53,7 +53,7 @@ namespace Solitaire.Game
             .Concat(BaseColors.SelectMany(color => Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Dragon))))
             .Append(new Card(Color.Flower, Value.Flower));
 
-        internal static HashSet<Value> NumericValues = new() { Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9 };
+        public static HashSet<Value> NumericValues = new() { Value.N1, Value.N2, Value.N3, Value.N4, Value.N5, Value.N6, Value.N7, Value.N8, Value.N9 };
 
         public bool CanHold(Card other)
         {

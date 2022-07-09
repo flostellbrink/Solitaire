@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Solitaire.Game;
+using Core.Game;
 
-namespace Solitaire.Stacks
+namespace Core.Stacks
 {
     public abstract class AbstractStack : IStack
     {
-        internal readonly List<Card> Cards = new();
+        public readonly List<Card> Cards = new();
 
         public abstract IEnumerable<Unit> MovableCards { get; }
 

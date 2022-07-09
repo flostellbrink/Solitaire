@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Solitaire.Game;
+using Core.Game;
 
-namespace Solitaire
+namespace Core
 {
     public class Solver
     {

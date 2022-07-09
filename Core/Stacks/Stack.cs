@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Solitaire.Game;
+using Core.Game;
 
-namespace Solitaire.Stacks
+namespace Core.Stacks
 {
     public class Stack : AbstractStack
     {

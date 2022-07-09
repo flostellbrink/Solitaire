@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Solitaire.Game
+namespace Core.Game
 {
     public class Unit : IEquatable<Unit>
     {

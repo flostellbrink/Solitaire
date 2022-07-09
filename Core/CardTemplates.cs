@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using Core.Game;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Solitaire.Game;
-using Color = Solitaire.Game.Color;
+using Color = Core.Game.Color;
 
-namespace Solitaire
+namespace Core
 {
     public static class CardTemplates
     {

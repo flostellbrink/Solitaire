@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Solitaire.Stacks;
+using Core.Game;
+using Core.Stacks;
 
-namespace Solitaire.Game
+namespace Solitaire
 {
     public class CustomBoard : Board
     {
