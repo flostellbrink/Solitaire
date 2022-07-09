@@ -10,7 +10,7 @@ There is also a server version that receives screenshots and helps out with the 
 
 ### iOS Shortcut
 
-Just take a screenshot in-game and share it with [this shortcut](Solitaire.shortcut?raw=1) :)
+Just take a screenshot in-game and share it with [this shortcut](https://www.icloud.com/shortcuts/29b3fe7af90f4337a5e749a26d515983) :)
 
 ## Screenshots
 
