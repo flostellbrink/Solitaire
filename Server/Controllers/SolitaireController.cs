@@ -25,8 +25,8 @@ namespace Server.Controllers
 
             var board = new ImageBoard(image);
             Console.WriteLine(board.ToString());
-            if (board.Solved) return "Good job!";
             if (!board.IsValid()) return "Sorry cannot read this board.";
+            if (board.Solved) return "Good job!";
 
             var solver = new Solver(board, Solver.Mode.Normal);
             var solution = solver.Solve();
