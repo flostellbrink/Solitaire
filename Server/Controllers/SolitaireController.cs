@@ -18,7 +18,10 @@ namespace Server.Controllers
         public string Solvable([Required] IFormFile file)
         {
             AnsiColorHelper.Enabled = false;
+            Console.WriteLine($"Got image {file.FileName} with {file.Length} bytes");
+
             using var image = Image.Load<Rgba32>(file.OpenReadStream());
+            Console.WriteLine($"Loaded image with {image.Width}x{image.Height} pixels");
 
             var board = new ImageBoard(image);
             Console.WriteLine(board.ToString());
