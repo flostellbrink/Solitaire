@@ -28,7 +28,6 @@ namespace Server.Controllers
             if (!board.IsValid()) return "Sorry cannot read this board.";
             if (board.Solved) return "Good job!";
 
-            var clone = new Board(board);
             var solver = new Solver(board, Solver.Mode.Normal);
             var solution = solver.Solve();
             Console.WriteLine();
@@ -37,19 +36,7 @@ namespace Server.Controllers
             var nextMove = solution.MoveHistory.LastOrDefault();
             if (nextMove == null) return "Good job!";
 
-            // Replay the solution and count manual moves
-            var manualMoves = 0;
-            foreach (var move in solution.MoveHistory.Reverse())
-            {
-                var translated = move.Clone(clone);
-                var automatic = translated.IsForced();
-                translated.Apply();
-                if (!automatic) manualMoves++;
-            }
-
-            Console.WriteLine(
-                $"You got this! There's a solution in {manualMoves} moves. Try moving the {nextMove.Unit.Cards.First()} :)");
-            return nextMove.ToString();
+            return $"You got this! Try moving the {nextMove.Unit.Cards.First()} :)";
         }
     }
 }
