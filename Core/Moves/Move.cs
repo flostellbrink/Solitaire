@@ -13,7 +13,7 @@ namespace Core.Moves
 
         public readonly IStack Destination;
 
-        public readonly Unit Unit;
+        public Unit Unit { get; }
 
         public Move(Board board, IStack source, IStack destination, Unit unit)
         {

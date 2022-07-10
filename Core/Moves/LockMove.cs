@@ -14,7 +14,7 @@ namespace Core.Moves
 
         public readonly LockableStack Destination;
 
-        public readonly Unit Unit;
+        public Unit Unit { get; }
 
         public LockMove(Board board, ICollection<IStack> sources, LockableStack destination, Unit unit)
         {

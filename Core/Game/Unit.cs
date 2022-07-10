@@ -7,7 +7,7 @@ namespace Core.Game
 {
     public class Unit : IEquatable<Unit>
     {
-        internal readonly ICollection<Card> Cards;
+        public readonly ICollection<Card> Cards;
 
         public Unit(ICollection<Card> cards)
         {
@@ -29,7 +29,7 @@ namespace Core.Game
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Unit) obj);
+            return Equals((Unit)obj);
         }
 
         public override string ToString() => string.Join(", ", Cards);
