@@ -27,19 +27,22 @@ namespace Core
         BackgroundWhite = 47,
     }
 
-    public static class AnsiColorHelper
+    public static partial class AnsiColorHelper
     {
-        public static bool Enabled = true;
+        public static bool Enabled { get; set; } = true;
 
         public static string AnsiColorEscapeCode(this AnsiColor color) => $"\u001b[{(int)color}m";
 
         public static string Colorize(this string value, AnsiColor color) =>
-            Enabled ? $"{color.AnsiColorEscapeCode()}{value}{AnsiColor.None.AnsiColorEscapeCode()}" : value;
+            Enabled
+                ? $"{color.AnsiColorEscapeCode()}{value}{AnsiColor.None.AnsiColorEscapeCode()}"
+                : value;
 
-        private static readonly Regex AnsiRegex = new("\u001b[^m]+m", RegexOptions.Compiled);
+        [GeneratedRegex("\u001b[^m]+m", RegexOptions.Compiled)]
+        private static partial Regex AnsiRegex();
 
         public static int AnsiInvisibleLength(this string value) =>
-            AnsiRegex.Matches(value).Sum(match => match.Length);
+            AnsiRegex().Matches(value).Sum(match => match.Length);
 
         public static string PadRightAnsi(this string value, int totalWidth) =>
             value.PadRight(totalWidth + value.AnsiInvisibleLength());

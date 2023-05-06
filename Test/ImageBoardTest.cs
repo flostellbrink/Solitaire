@@ -84,19 +84,26 @@ namespace Test
             var colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToArray();
             var values = Enum.GetValues(typeof(Value)).Cast<Value>().ToArray();
 
-            var templatePaths = Directory.GetFiles($"{AppContext.BaseDirectory}/../../../Templates");
+            var templatePaths = Directory.GetFiles(
+                $"{AppContext.BaseDirectory}/../../../Templates"
+            );
             foreach (var templatePath in templatePaths)
             {
                 var fileName = Path.GetFileNameWithoutExtension(templatePath);
-                if (string.IsNullOrWhiteSpace(fileName)) continue;
+                if (string.IsNullOrWhiteSpace(fileName))
+                    continue;
 
                 var parts = fileName.Split(' ');
                 Assert.Equal(2, parts.Length);
 
-                var color = colors.Single(color =>
-                    color.ToDescription().Equals(parts[0], StringComparison.OrdinalIgnoreCase));
-                var value = values.Single(value =>
-                    value.ToDescription().Equals(parts[1], StringComparison.OrdinalIgnoreCase));
+                var color = colors.Single(
+                    color =>
+                        color.ToDescription().Equals(parts[0], StringComparison.OrdinalIgnoreCase)
+                );
+                var value = values.Single(
+                    value =>
+                        value.ToDescription().Equals(parts[1], StringComparison.OrdinalIgnoreCase)
+                );
                 var card = new Card(color, value);
                 var image = Image.Load<Rgba32>(templatePath);
                 var pixelArray = new Rgba32[image.Width * image.Height];
@@ -105,9 +112,11 @@ namespace Test
                 Assert.Equal(18, image.Height);
 
                 var formattedCard = $"new Card(Color.{color}, Value.{value})";
-                string FormatPixel(Rgba32 pixel) => $"{pixel.R}, {pixel.G}, {pixel.B}, {pixel.A}";
+                static string FormatPixel(Rgba32 pixel) =>
+                    $"{pixel.R}, {pixel.G}, {pixel.B}, {pixel.A}";
                 var formattedPixels = string.Join(", ", pixelArray.Select(FormatPixel));
-                var formattedImage = $"Image.LoadPixelData<Rgba32>(new byte[]{{{formattedPixels}}}, 18, 18)";
+                var formattedImage =
+                    $"Image.LoadPixelData<Rgba32>(new byte[]{{{formattedPixels}}}, 18, 18)";
                 _output.WriteLine($"({formattedCard}, {formattedImage}),");
             }
         }

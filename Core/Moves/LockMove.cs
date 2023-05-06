@@ -16,7 +16,12 @@ namespace Core.Moves
 
         public Unit Unit { get; }
 
-        public LockMove(Board board, ICollection<IStack> sources, LockableStack destination, Unit unit)
+        public LockMove(
+            Board board,
+            ICollection<IStack> sources,
+            LockableStack destination,
+            Unit unit
+        )
         {
             Board = board;
             Sources = sources;
@@ -26,12 +31,12 @@ namespace Core.Moves
 
         public IMove Clone(Board targetBoard)
         {
-            return new LockMove(targetBoard,
-                Sources.Select(mSource =>
-                    targetBoard.AllStacks.Single(source => source.ToString() == mSource.ToString())).ToList(),
-                targetBoard.AllStacks.Single(destination => destination.ToString() == Destination.ToString()) as
-                    LockableStack,
-                Unit);
+            var sources = Sources.Select(
+                ms => targetBoard.AllStacks.Single(ts => ts.ToString() == ms.ToString())
+            );
+            var target = targetBoard.AllStacks.Single(d => d.ToString() == Destination.ToString());
+
+            return new LockMove(targetBoard, sources.ToList(), (LockableStack)target, Unit);
         }
 
         public bool IsForced() => false;

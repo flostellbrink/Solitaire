@@ -7,7 +7,7 @@ namespace Core.Stacks
     {
         IEnumerable<Unit> MovableCards { get; }
 
-        bool Accepts(Unit _);
+        bool Accepts(Unit unit);
 
         void Add(Unit unit);
 

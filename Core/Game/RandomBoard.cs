@@ -15,10 +15,7 @@ namespace Core.Game
             var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
 
             var stackIndex = 0;
-            foreach (var card in deck)
-            {
-                Stacks.ElementAt(stackIndex++ % Stacks.Count).Cards.Add(card);
-            }
+            Stacks.ElementAt(stackIndex++ % Stacks.Count).Cards.AddRange(deck);
 
             Console.WriteLine($"Random board based on seed: {Seed}");
             Console.WriteLine(this);

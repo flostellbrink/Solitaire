@@ -8,21 +8,24 @@ namespace Core
 {
     public static class Extensions
     {
-        public static string ToDescription<T>(this T value)
+        public static string ToDescription<T>(this T value) where T : Enum
         {
-            if (!typeof(T).IsEnum)
-                return value.ToString();
+            var stringified = value.ToString() ?? string.Empty;
 
-            return typeof(T).GetField(value.ToString())
-                       .GetCustomAttributes(typeof(DescriptionAttribute), false)
-                       .Cast<DescriptionAttribute>()
-                       .Select(attribute => attribute.Description)
-                       .FirstOrDefault() ?? value.ToString();
+            return typeof(T)
+                    .GetField(stringified)
+                    ?.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                    .Cast<DescriptionAttribute>()
+                    .Select(attribute => attribute.Description)
+                    .FirstOrDefault() ?? stringified;
         }
 
         public static IEnumerable<(T, T)> ConsecutivePairs<T>(this IEnumerable<T> list)
         {
             var previous = list.FirstOrDefault();
+            if (previous == null)
+                yield break;
+
             foreach (var item in list.Skip(1))
             {
                 yield return (previous, item);
@@ -34,9 +37,13 @@ namespace Core
             this StringBuilder builder,
             string separator,
             int totalWidth,
-            IEnumerable<T> values)
+            IEnumerable<T> values
+        )
         {
-            builder.Append(string.Join(separator, values.Select(item => (item?.ToString() ?? string.Empty).PadRightAnsi(totalWidth))));
+            builder.AppendJoin(
+                separator,
+                values.Select(item => (item?.ToString() ?? string.Empty).PadRightAnsi(totalWidth))
+            );
         }
 
         public static int GetCollectionHashCode<T>(this ICollection<T> collection)
@@ -60,25 +67,44 @@ namespace Core
             }
         }
 
-        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> enumerable, Func<T, TKey> by, params TKey[] initialKeys)
+        public static IEnumerable<T> DistinctBy<T, TKey>(
+            this IEnumerable<T> enumerable,
+            Func<T, TKey> by,
+            params TKey[] initialKeys
+        )
         {
             var keys = new HashSet<TKey>();
             foreach (var initialKey in initialKeys)
                 keys.Add(initialKey);
             foreach (var value in enumerable)
-                if (keys.Add(by(value))) yield return value;
+            {
+                if (keys.Add(by(value)))
+                    yield return value;
+            }
         }
 
         // Like Except, but only removes one instance of T per item of except
-        public static IEnumerable<T> ExceptQuantitative<T>(this IEnumerable<T> enumerable, IEnumerable<T> except) where T: IEquatable<T>
+        public static IEnumerable<T> ExceptQuantitative<T>(
+            this IEnumerable<T> enumerable,
+            IEnumerable<T> except
+        ) where T : IEquatable<T>
         {
             var exceptGroups = except
                 .GroupBy(value => value)
                 .ToLookup(group => group.Key, group => group.Count());
             return enumerable
                 .GroupBy(value => value)
-                .Select(group => (group.Key, Count: group.Count(), Other: exceptGroups[group.Key].FirstOrDefault()))
-                .SelectMany(entry => Enumerable.Repeat(entry.Key, Math.Max(0, entry.Count - entry.Other)));
+                .Select(
+                    group =>
+                        (
+                            group.Key,
+                            Count: group.Count(),
+                            Other: exceptGroups[group.Key].FirstOrDefault()
+                        )
+                )
+                .SelectMany(
+                    entry => Enumerable.Repeat(entry.Key, Math.Max(0, entry.Count - entry.Other))
+                );
         }
     }
 }

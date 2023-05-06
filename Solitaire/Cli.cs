@@ -5,14 +5,17 @@ using Core.Game;
 
 namespace Solitaire
 {
-    public class Program
+    public static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
-            Console.WriteLine(@" _______  _____         _____ _______ _______ _____  ______ _______");
-            Console.WriteLine(@" |______ |     | |        |      |    |_____|   |   |_____/ |______");
-            Console.WriteLine(@" ______| |_____| |_____ __|__    |    |     | __|__ |    \_ |______");
-            Console.WriteLine();
+            Console.WriteLine(
+                @"
+ _______  _____         _____ _______ _______ _____  ______ _______
+ |______ |     | |        |      |    |_____|   |   |_____/ |______
+ ______| |_____| |_____ __|__    |    |     | __|__ |    \_ |______
+"
+            );
 
             const string createGame = "Create new game";
             const string benchmarkNormal = "Benchmark solvability";
@@ -36,7 +39,7 @@ namespace Solitaire
                     BenchmarkSolvability(Solver.Mode.Hard);
                     return;
                 default:
-                    throw new ArgumentException();
+                    throw new($"Unexpected decision: {decision}");
             }
         }
 
@@ -51,7 +54,8 @@ namespace Solitaire
                 Console.WriteLine(board);
                 var valid = board.IsValid();
                 Console.WriteLine();
-                if (valid) break;
+                if (valid)
+                    break;
             }
 
             const string solve = "Solve automatically";
@@ -115,12 +119,15 @@ namespace Solitaire
                 }
                 else
                 {
-                    Console.WriteLine($"\nSolved. Solution contains {solution.MoveHistory.Count} steps total.");
+                    Console.WriteLine(
+                        $"\nSolved. Solution contains {solution.MoveHistory.Count} steps total."
+                    );
                     solved++;
                 }
 
                 Console.WriteLine(
-                    $"Solve rate: {(double)solved / (solved + failed):P}, solved: {solved}, failed: {failed}");
+                    $"Solve rate: {(double)solved / (solved + failed):P}, solved: {solved}, failed: {failed}"
+                );
             }
         }
 
@@ -135,6 +142,7 @@ namespace Solitaire
             if (solution == null)
             {
                 Console.WriteLine("Failed to find a solution");
+                return;
             }
 
             // Replay the solution and count manual moves
@@ -146,7 +154,8 @@ namespace Solitaire
                 var automatic = translated.IsForced();
                 translated.Apply();
 
-                if (!automatic) manualMoves++;
+                if (!automatic)
+                    manualMoves++;
                 Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}");
                 Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{clone}");
             }
@@ -167,7 +176,8 @@ namespace Solitaire
                 if (board.Solved)
                 {
                     Console.WriteLine(
-                        "Congratulations, you solved the puzzle! You'll have to imagine the animation for now ;)");
+                        "Congratulations, you solved the puzzle! You'll have to imagine the animation for now ;)"
+                    );
                     return;
                 }
 

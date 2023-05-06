@@ -19,7 +19,7 @@ namespace Core
 
         private SortedList<int, List<Board>> Frontier { get; } = new();
 
-        private Mode mode;
+        private readonly Mode mode;
 
         private void AddToFrontier(Board board)
         {
@@ -28,24 +28,27 @@ namespace Core
 
             lock (VisitedBoards)
             {
-                if (VisitedBoards.Contains(hash)) return;
+                if (VisitedBoards.Contains(hash))
+                    return;
             }
 
             lock (Frontier)
             {
-                if (!InFrontier.Add(hash)) return;
-                if (Frontier.ContainsKey(loss))
-                    Frontier[loss].Add(board);
+                if (!InFrontier.Add(hash))
+                    return;
+                if (Frontier.TryGetValue(loss, out List<Board>? value))
+                    value.Add(board);
                 else
                     Frontier.Add(loss, new List<Board> { board });
             }
         }
 
-        private IEnumerable<Board> GetFromFrontier()
+        private IEnumerable<Board>? GetFromFrontier()
         {
             lock (Frontier)
             {
-                if (Frontier.Count == 0) return null;
+                if (Frontier.Count == 0)
+                    return null;
                 var (key, value) = Frontier.First();
                 Frontier.Remove(key);
                 return value;
@@ -60,31 +63,40 @@ namespace Core
             AddToFrontier(board);
         }
 
-        public Board Solve()
+        public Board? Solve()
         {
             while (true)
             {
                 Console.Write("\r".PadRight(Console.WindowWidth) + "\r");
 
-                Console.Write($"Visited: {VisitedBoards.Count}, Active: {Frontier.Values.Sum(v => v.Count)}");
+                Console.Write(
+                    $"Visited: {VisitedBoards.Count}, Active: {Frontier.Values.Sum(v => v.Count)}"
+                );
 
                 var boards = GetFromFrontier();
-                if (boards == null) return null;
+                if (boards == null)
+                    return null;
 
-                var solution = boards.AsParallel().Select(Solve)
+                var solution = boards
+                    .AsParallel()
+                    .Select(Solve)
                     .FirstOrDefault(board => board != null);
-                if (solution != null) return solution;
+                if (solution != null)
+                    return solution;
             }
         }
 
-        private Board Solve(Board board)
+        private Board? Solve(Board board)
         {
-            if (mode == Mode.Hard && !board.HardModeValid) return null;
-            if (board.Solved) return board;
+            if (mode == Mode.Hard && !board.HardModeValid)
+                return null;
+            if (board.Solved)
+                return board;
 
             lock (VisitedBoards)
             {
-                if (!VisitedBoards.Add(board.GetHashCode())) return null;
+                if (!VisitedBoards.Add(board.GetHashCode()))
+                    return null;
             }
 
             foreach (var move in board.AllMoves)

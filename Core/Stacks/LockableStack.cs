@@ -8,7 +8,7 @@ namespace Core.Stacks
     {
         private readonly int _index;
 
-        public bool Locked;
+        public bool Locked { get; set; }
 
         public LockableStack(int index)
         {
@@ -22,9 +22,11 @@ namespace Core.Stacks
         }
 
         public override IEnumerable<Unit> MovableCards =>
-            Locked || !Cards.Any() ? Enumerable.Empty<Unit>() : new[] {new Unit(new[] {Cards.First()})};
+            Locked || !Cards.Any()
+                ? Enumerable.Empty<Unit>()
+                : new[] { new Unit(new[] { Cards[0] }) };
 
-        public override  bool Accepts(Unit unit) => !Locked && !Cards.Any() && unit.Cards.Count == 1;
+        public override bool Accepts(Unit unit) => !Locked && !Cards.Any() && unit.Cards.Count == 1;
 
         public override string ToString() => $"Lockable {_index}";
     }

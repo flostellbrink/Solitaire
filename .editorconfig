@@ -1,0 +1,16 @@
+[*.cs]
+
+# Treat unused imports as errors
+dotnet_diagnostic.IDE0005.severity = error
+
+# Prefer target new
+dotnet_diagnostic.IDE0090.severity = error
+
+# Multiple where statements in linq are more readable
+dotnet_diagnostic.RCS1112.severity = none
+
+# It's okay to throw normal generic exceptions sometimes
+dotnet_diagnostic.CA2201.severity = none
+
+# Hard enough to name things without avoiding specific suffixes
+dotnet_diagnostic.CA1711.severity = none

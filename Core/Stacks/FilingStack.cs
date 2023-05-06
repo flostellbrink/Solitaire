@@ -24,10 +24,13 @@ namespace Core.Stacks
 
         public override bool Accepts(Unit unit)
         {
-            if (unit.Cards.Count != 1) return false;
+            if (unit.Cards.Count != 1)
+                return false;
             var card = unit.Cards.First();
-            if (Cards.Any() && card.Color != Cards.First().Color) return false;
-            if (!Card.NumericValues.Contains(card.Value)) return false;
+            if (Cards.Any() && card.Color != Cards[0].Color)
+                return false;
+            if (!Card.NumericValues.Contains(card.Value))
+                return false;
             return card.Value == NextIndex;
         }
 

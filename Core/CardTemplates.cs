@@ -8,7 +8,8 @@ namespace Core
 {
     public static class CardTemplates
     {
-        public static List<(Card, Image<Rgba32>)> Templates = new()
+        // csharpier-ignore
+        public static readonly List<(Card, Image<Rgba32>)> Templates = new()
         {
             (new Card(Color.Red, Value.N9),
                 Image.LoadPixelData<Rgba32>(

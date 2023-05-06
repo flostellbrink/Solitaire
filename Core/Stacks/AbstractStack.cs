@@ -7,15 +7,13 @@ namespace Core.Stacks
 {
     public abstract class AbstractStack : IStack
     {
-        public readonly List<Card> Cards = new();
+        public List<Card> Cards { get; } = new();
 
         public abstract IEnumerable<Unit> MovableCards { get; }
 
-        public abstract bool Accepts(Unit _);
+        public abstract bool Accepts(Unit unit);
 
-        protected AbstractStack()
-        {
-        }
+        protected AbstractStack() { }
 
         protected AbstractStack(AbstractStack stack)
         {
@@ -24,10 +22,7 @@ namespace Core.Stacks
 
         public void Add(Unit unit)
         {
-            foreach (var card in unit.Cards)
-            {
-                Cards.Add(card);
-            }
+            Cards.AddRange(unit.Cards);
         }
 
         public void Remove(Unit unit)
@@ -42,7 +37,7 @@ namespace Core.Stacks
 
         public override int GetHashCode()
         {
-            return Cards != null ? Cards.GetCollectionHashCode() : 0;
+            return Cards.GetCollectionHashCode();
         }
     }
 }
