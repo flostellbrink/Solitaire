@@ -15,7 +15,7 @@ namespace Server.Controllers;
 public class SolitaireController : ControllerBase
 {
     [HttpPost("solvable")]
-    public string Solvable([Required] IFormFile file)
+    public static string Solvable([Required] IFormFile file)
     {
         AnsiColorHelper.Enabled = false;
         Console.WriteLine($"Got image {file.FileName} with {file.Length} bytes");
@@ -40,6 +40,6 @@ public class SolitaireController : ControllerBase
         if (nextMove == null)
             return "Good job!";
 
-        return $"You got this! Try moving the {nextMove.Unit.Cards.First()} :)";
+        return $"You got this! {nextMove.Stringify(board)} :)";
     }
 }

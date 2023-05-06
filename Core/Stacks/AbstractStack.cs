@@ -5,7 +5,7 @@ using Core.Game;
 
 namespace Core.Stacks;
 
-public abstract class AbstractStack : IStack
+public abstract class AbstractStack
 {
     public List<Card> Cards { get; } = new();
 
@@ -27,7 +27,7 @@ public abstract class AbstractStack : IStack
 
     public void Remove(Unit unit)
     {
-        Debug.Assert(MovableCards.Contains(unit));
+        Debug.Assert(MovableCards.Contains(unit), $"{this} does not contain {unit}");
         foreach (var card in unit.Cards.Reverse())
         {
             Debug.Assert(Cards[^1].Equals(card));

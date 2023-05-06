@@ -7,60 +7,56 @@ namespace Core.Moves;
 
 internal class Move : IMove
 {
-    public readonly Board Board;
+    public readonly int Source;
 
-    public readonly IStack Source;
+    public readonly int Destination;
 
-    public readonly IStack Destination;
+    public readonly int Count;
 
-    public Unit Unit { get; }
-
-    public Move(Board board, IStack source, IStack destination, Unit unit)
+    public Move(int source, int destination, int count)
     {
-        Board = board;
         Source = source;
         Destination = destination;
-        Unit = unit;
+        Count = count;
     }
 
-    public IMove Clone(Board targetBoard)
+    public bool IsForced(Board board)
     {
-        return new Move(
-            targetBoard,
-            targetBoard.AllStacks.Single(source => source.ToString() == Source.ToString()),
-            targetBoard.AllStacks.Single(
-                destination => destination.ToString() == Destination.ToString()
-            ),
-            Unit
-        );
-    }
-
-    public bool IsForced()
-    {
-        if (Unit.Cards.Count != 1)
+        if (Count != 1)
             return false;
-        var card = Unit.Cards.First();
 
-        return Destination switch
+        var card = board.AllStacks[Source].Cards.Last();
+        var destination = board.AllStacks[Destination];
+        return destination switch
         {
             FlowerStack _ when card.Color == Color.Flower && card.Value == Value.Flower => true,
-            FilingStack _ when Board.HighestAutomaticFilingValue >= card.Value => true,
+            FilingStack _ when board.HighestAutomaticFilingValue >= card.Value => true,
             _ => false
         };
     }
 
-    public void Apply()
+    public void Apply(Board board)
     {
-        Source.Remove(Unit);
-        Debug.Assert(Destination.Accepts(Unit));
-        Destination.Add(Unit);
+        var source = board.AllStacks[Source];
+        var destination = board.AllStacks[Destination];
+        var unit = new Unit(source.Cards.Skip(source.Cards.Count - Count).ToList());
 
-        Board.MoveHistory.Push(this);
-        Board.ApplyForcedMoves();
+        source.Remove(unit);
+        Debug.Assert(
+            destination.Accepts(unit),
+            $"Destination {destination} does not accept {unit}"
+        );
+        destination.Add(unit);
+
+        board.MoveHistory.Push(this);
+        board.ApplyForcedMoves();
     }
 
-    public override string ToString()
+    public string Stringify(Board board)
     {
-        return $"Move {Unit} from {Source} to {Destination}";
+        var source = board.AllStacks[Source];
+        var destination = board.AllStacks[Destination];
+        var unit = new Unit(source.Cards.Skip(source.Cards.Count - Count).ToList());
+        return $"Move {unit} from {source} to {destination}";
     }
 }

@@ -9,7 +9,8 @@ public class RandomBoard : Board
 
     public RandomBoard(int? seed = null)
     {
-        var random = seed is null ? new Random() : new Random(seed.Value);
+        Seed = seed ?? Environment.TickCount;
+        var random = new Random(Seed);
         var deck = Card.FullSet.OrderBy(_ => random.Next()).ToList();
 
         for (var i = 0; i < deck.Count; i++)

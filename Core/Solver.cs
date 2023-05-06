@@ -99,7 +99,7 @@ public class Solver
         foreach (var move in board.AllMoves)
         {
             var clone = new Board(board);
-            move.Clone(clone).Apply();
+            move.Apply(clone);
             AddToFrontier(clone);
         }
 

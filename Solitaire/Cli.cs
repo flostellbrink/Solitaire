@@ -137,9 +137,8 @@ static void Solve(Board board, Solver.Mode mode)
     var index = 0;
     foreach (var move in solution.MoveHistory.Reverse())
     {
-        var translated = move.Clone(clone);
-        var automatic = translated.IsForced();
-        translated.Apply();
+        var automatic = move.IsForced(clone);
+        move.Apply(clone);
 
         if (!automatic)
             manualMoves++;
@@ -175,10 +174,12 @@ static void Play(Board board)
             return;
         }
 
-        var selectedMove = "Chose your move".AskForIndexedDecision(moves);
+        var selectedMove = "Chose your move".AskForIndexedDecision(
+            moves.Select(m => m.Stringify(board)).ToArray()
+        );
         Console.WriteLine($"Selected move: {selectedMove}");
         Console.WriteLine();
-        selectedMove.Apply();
+        moves.Single(m => m.Stringify(board) == selectedMove).Apply(board);
     }
 }
 

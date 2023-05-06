@@ -8,58 +8,53 @@ namespace Core.Moves;
 
 internal class LockMove : IMove
 {
-    public readonly Board Board;
+    public readonly ICollection<int> Sources;
 
-    public readonly ICollection<IStack> Sources;
+    public readonly int Destination;
 
-    public readonly LockableStack Destination;
+    public readonly int Count;
 
-    public Unit Unit { get; }
-
-    public LockMove(Board board, ICollection<IStack> sources, LockableStack destination, Unit unit)
+    public LockMove(ICollection<int> sources, int destination, int count)
     {
-        Board = board;
         Sources = sources;
         Destination = destination;
-        Unit = unit;
+        Count = count;
     }
 
-    public IMove Clone(Board targetBoard)
+    public bool IsForced(Board board) => false;
+
+    public void Apply(Board board)
     {
-        var sources = Sources.Select(
-            ms => targetBoard.AllStacks.Single(ts => ts.ToString() == ms.ToString())
-        );
-        var target = targetBoard.AllStacks.Single(d => d.ToString() == Destination.ToString());
+        var sources = Sources.Select(source => board.AllStacks[source]);
+        var destination = (LockableStack)board.AllStacks[Destination];
+        var card = sources.First().Cards.Last();
+        var unit = new Unit(new List<Card> { card });
 
-        return new LockMove(targetBoard, sources.ToList(), (LockableStack)target, Unit);
-    }
+        Debug.Assert(destination.Cards.Count <= 1);
+        Debug.Assert(destination.Cards.All(card => card.Color == card.Color));
+        Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
 
-    public bool IsForced() => false;
-
-    public void Apply()
-    {
-        Debug.Assert(Destination.Cards.Count <= 1);
-        Debug.Assert(Destination.Cards.All(card => card.Color == Unit.Cards.First().Color));
-        Debug.Assert(Destination.Cards.All(card => card.Value == Value.Dragon));
-
-        foreach (var source in Sources)
+        foreach (var source in sources)
         {
-            source.Remove(Unit);
-            Destination.Add(Unit);
+            source.Remove(unit);
+            destination.Add(unit);
         }
 
-        Destination.Locked = true;
+        destination.Locked = true;
 
-        Debug.Assert(Destination.Cards.Count == 4);
-        Debug.Assert(Destination.Cards.All(card => card.Color == Unit.Cards.First().Color));
-        Debug.Assert(Destination.Cards.All(card => card.Value == Value.Dragon));
+        Debug.Assert(destination.Cards.Count == 4);
+        Debug.Assert(destination.Cards.All(card => card.Color == card.Color));
+        Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
 
-        Board.MoveHistory.Push(this);
-        Board.ApplyForcedMoves();
+        board.MoveHistory.Push(this);
+        board.ApplyForcedMoves();
     }
 
-    public override string ToString()
+    public string Stringify(Board board)
     {
-        return $"Lock {Unit.Cards.FirstOrDefault()} from {string.Join(", ", Sources)} in at {Destination}";
+        var card = board.AllStacks[Sources.First()].Cards.Last();
+        var sources = Sources.Select(source => board.AllStacks[source]);
+        var destination = board.AllStacks[Destination];
+        return $"Lock {card} from {string.Join(", ", sources)} in at {destination}";
     }
 }
