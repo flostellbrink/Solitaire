@@ -5,21 +5,8 @@ using Core.Stacks;
 
 namespace Core.Moves;
 
-internal class Move : IMove
+public record Move(int Source, int Destination, int Count) : IMove
 {
-    public readonly int Source;
-
-    public readonly int Destination;
-
-    public readonly int Count;
-
-    public Move(int source, int destination, int count)
-    {
-        Source = source;
-        Destination = destination;
-        Count = count;
-    }
-
     public bool IsForced(Board board)
     {
         if (Count != 1)
@@ -40,11 +27,29 @@ internal class Move : IMove
         var source = board.AllStacks[Source];
         var destination = board.AllStacks[Destination];
 
-        Debug.Assert(destination.Accepts(source.Cards.Last(), Count));
+        Debug.Assert(
+            destination.Accepts(source.Cards[^Count], Count),
+            $"Cannot move {source.Cards.Last()} to {destination}.\n{board}"
+        );
         destination.Add(source.Cards.Skip(source.Cards.Count - Count));
         source.Remove(Count);
 
         board.MoveHistory.Push(this);
+    }
+
+    public void Undo(Board board)
+    {
+        var source = board.AllStacks[Source];
+        var destination = board.AllStacks[Destination];
+
+        source.Add(destination.Cards.Skip(destination.Cards.Count - Count));
+        destination.Remove(Count);
+
+        var popped = board.MoveHistory.Pop();
+        Debug.Assert(
+            popped == (IMove)this,
+            $"Expected {Stringify(board)}, got {popped.Stringify(board)}."
+        );
     }
 
     public string Stringify(Board board)

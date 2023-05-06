@@ -30,7 +30,7 @@ public class SolitaireController : ControllerBase
         if (board.Solved)
             return "Good job!";
 
-        var solver = new Solver(board, Solver.Mode.Normal);
+        var solver = new DFSolver(board, Mode.Normal);
         var solution = solver.Solve();
         Console.WriteLine();
         if (solution == null)

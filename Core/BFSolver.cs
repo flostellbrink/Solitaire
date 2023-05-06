@@ -5,14 +5,12 @@ using Core.Game;
 
 namespace Core;
 
-public class Solver
+/// <summary>
+/// Breadth-first solver.
+/// Great for finding an intuitive solution slowly.
+/// </summary>
+public class BFSolver
 {
-    public enum Mode
-    {
-        Normal,
-        Hard,
-    }
-
     private HashSet<int> VisitedBoards { get; } = new();
 
     private HashSet<int> InFrontier { get; } = new();
@@ -55,12 +53,13 @@ public class Solver
         }
     }
 
-    public Solver(Board board, Mode mode)
+    public BFSolver(Board board, Mode mode)
     {
         this.mode = mode;
 
-        board.ApplyForcedMoves();
-        AddToFrontier(board);
+        var clone = new Board(board);
+        clone.ApplyForcedMoves();
+        AddToFrontier(clone);
     }
 
     public Board? Solve()
@@ -69,9 +68,8 @@ public class Solver
         {
             Console.Write("\r".PadRight(Console.WindowWidth) + "\r");
 
-            Console.Write(
-                $"Visited: {VisitedBoards.Count}, Active: {Frontier.Values.Sum(v => v.Count)}"
-            );
+            if (VisitedBoards.Count % 10_000 == 0)
+                Console.Write($"{VisitedBoards.Count} visited");
 
             var boards = GetFromFrontier();
             if (boards == null)

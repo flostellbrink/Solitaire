@@ -8,11 +8,17 @@ using Core.Stacks;
 
 namespace Core.Game;
 
+public enum Mode
+{
+    Normal,
+    Hard,
+}
+
 public class Board
 {
     internal const int StackCount = 8;
-
     internal const int SymbolsPerColor = 4;
+    private const int LockableStackOffset = StackCount + SymbolsPerColor;
 
     public Stack<IMove> MoveHistory { get; }
     protected ICollection<LockableStack> LockableStacks { get; }
@@ -33,10 +39,10 @@ public class Board
 
         AllStacks = Enumerable
             .Empty<AbstractStack>()
-            .Concat(LockableStacks)
-            .Append(FlowerStack)
-            .Concat(FilingStacks)
             .Concat(Stacks)
+            .Concat(FilingStacks)
+            .Append(FlowerStack)
+            .Concat(LockableStacks)
             .ToList();
     }
 
@@ -52,10 +58,10 @@ public class Board
 
         AllStacks = Enumerable
             .Empty<AbstractStack>()
-            .Concat(LockableStacks)
-            .Append(FlowerStack)
-            .Concat(FilingStacks)
             .Concat(Stacks)
+            .Concat(FilingStacks)
+            .Append(FlowerStack)
+            .Concat(LockableStacks)
             .ToList();
 
         Debug.Assert(GetHashCode() == board.GetHashCode());
@@ -101,25 +107,28 @@ public class Board
         + LockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Dragon))
         + (LockableStacks.Count(locked => !locked.Locked) * 100);
 
-    private IEnumerable<Move> AllStandardMoves =>
-        AllStacks.SelectMany(
-            (source, sourceIndex) =>
-                Enumerable
-                    .Range(1, source.MovableCards)
-                    .SelectMany(
-                        count =>
-                            AllStacks
-                                .Select((stack, index) => (stack, index))
-                                .Where(destination => destination.index != sourceIndex)
-                                .Where(
-                                    destination =>
-                                        destination.stack.Accepts(source.Cards[^count], count)
-                                )
-                                .Select(
-                                    destination => new Move(sourceIndex, destination.index, count)
-                                )
-                    )
-        );
+    private IEnumerable<Move> AllStandardMoves()
+    {
+        var sources = AllStacks
+            .Select((stack, index) => (stack, index))
+            .Where(stack => stack.stack.MovableCards > 0)
+            .SelectMany(
+                stack =>
+                    Enumerable
+                        .Range(1, stack.stack.MovableCards)
+                        .Select(count => (stack.stack, stack.index, count))
+            )
+            .ToList();
+
+        foreach (var destination in AllStacks.Select((stack, index) => (stack, index)))
+        {
+            foreach (var source in sources)
+            {
+                if (destination.stack.Accepts(source.stack.Cards[^source.count], source.count))
+                    yield return new Move(source.index, destination.index, source.count);
+            }
+        }
+    }
 
     private readonly static List<Card> LockCards = Card.BaseColors
         .Select(color => new Card(color, Value.Dragon))
@@ -128,7 +137,7 @@ public class Board
     private IEnumerable<LockMove> AllLockMoves()
     {
         var lockableStacks = LockableStacks
-            .Select((stack, index) => (stack, index))
+            .Select((stack, index) => (stack, index: index + LockableStackOffset))
             .Where(stack => !stack.stack.Locked);
 
         foreach (var card in LockCards)
@@ -152,7 +161,7 @@ public class Board
     }
 
     public IEnumerable<IMove> AllMoves =>
-        Enumerable.Empty<IMove>().Concat(AllStandardMoves).Concat(AllLockMoves());
+        Enumerable.Empty<IMove>().Concat(AllLockMoves()).Concat(AllStandardMoves());
 
     // Moves that create distinct boards (e.g. no difference onto which empty stack a card is moved)
     public IEnumerable<IMove> DistinctMoves =>

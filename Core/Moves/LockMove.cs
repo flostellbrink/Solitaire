@@ -6,18 +6,8 @@ using Core.Stacks;
 
 namespace Core.Moves;
 
-internal class LockMove : IMove
+public record LockMove(ICollection<int> Sources, int Destination) : IMove
 {
-    public readonly ICollection<int> Sources;
-
-    public readonly int Destination;
-
-    public LockMove(ICollection<int> sources, int destination)
-    {
-        Sources = sources;
-        Destination = destination;
-    }
-
     public bool IsForced(Board board) => false;
 
     public void Apply(Board board)
@@ -43,6 +33,35 @@ internal class LockMove : IMove
         Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
 
         board.MoveHistory.Push(this);
+    }
+
+    public void Undo(Board board)
+    {
+        var sources = Sources.Select(source => board.AllStacks[source]);
+        var destination = (LockableStack)board.AllStacks[Destination];
+        var card = destination.Cards.Last();
+
+        Debug.Assert(destination.Cards.Count == 4);
+        Debug.Assert(destination.Cards.All(card => card.Color == card.Color));
+        Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
+
+        foreach (var source in sources)
+        {
+            source.Add(card);
+            destination.Remove(1);
+        }
+
+        destination.Locked = false;
+
+        Debug.Assert(destination.Cards.Count <= 1);
+        Debug.Assert(destination.Cards.All(card => card.Color == card.Color));
+        Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
+
+        var popped = board.MoveHistory.Pop();
+        Debug.Assert(
+            popped == (IMove)this,
+            $"Expected {Stringify(board)}, got {popped.Stringify(board)}."
+        );
     }
 
     public string Stringify(Board board)

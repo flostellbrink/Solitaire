@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using Core;
 using Core.Game;
 using Solitaire;
@@ -24,12 +25,12 @@ switch (decision)
     case Tool.BenchmarkNormal:
         Console.WriteLine("Running benchmark:");
         Console.WriteLine();
-        BenchmarkSolvability(Solver.Mode.Normal);
+        BenchmarkSolvability(Mode.Normal);
         return;
     case Tool.BenchmarkHard:
         Console.WriteLine("Running benchmark:");
         Console.WriteLine();
-        BenchmarkSolvability(Solver.Mode.Hard);
+        BenchmarkSolvability(Mode.Hard);
         return;
     default:
         throw new($"Unexpected decision: {decision}");
@@ -56,7 +57,7 @@ static void CreateGame()
         case PlayMode.Auto:
             Console.WriteLine("Solving board automatically");
             Console.WriteLine();
-            Solve(board, Solver.Mode.Normal);
+            Solve(board, Mode.Normal);
             return;
         case PlayMode.Manual:
             Console.WriteLine("Playing game");
@@ -90,14 +91,14 @@ static Board CreateBoard()
     }
 }
 
-static void BenchmarkSolvability(Solver.Mode mode)
+static void BenchmarkSolvability(Mode mode)
 {
     var solved = 0;
     var failed = 0;
     while (true)
     {
         var board = new RandomBoard();
-        var solver = new Solver(board, mode);
+        var solver = new DFSolver(board, mode);
         var solution = solver.Solve();
         if (solution == null)
         {
@@ -118,18 +119,51 @@ static void BenchmarkSolvability(Solver.Mode mode)
     }
 }
 
-static void Solve(Board board, Solver.Mode mode)
+static void Solve(Board board, Mode mode)
 {
-    // Create a clone for replay
-    var clone = new Board(board);
+    var resultEvent = new ManualResetEventSlim();
 
-    // Solve the original board
-    var solver = new Solver(board, mode);
-    var solution = solver.Solve();
-    Console.WriteLine();
+    Board? solution = null;
+    var bfThread = new Thread(() =>
+    {
+        try
+        {
+            BFSolver solver = new(board, mode);
+            solution = solver.Solve();
+            resultEvent.Set();
+        }
+        catch
+        {
+            // Ignore crashes due to interrupts
+        }
+    });
+    bfThread.Start();
+
+    var dfThread = new Thread(() =>
+    {
+        try
+        {
+            DFSolver solver = new(board, mode) { Silent = true };
+            var solution = solver.Solve();
+            if (solution == null)
+                resultEvent.Set();
+            else
+                Console.WriteLine($"Board is solvable, optimizing solution...");
+        }
+        catch
+        {
+            // Ignore crashes due to interrupts
+        }
+    });
+    dfThread.Start();
+
+    resultEvent.Wait();
+    dfThread.Interrupt();
+    bfThread.Interrupt();
+
     if (solution == null)
     {
-        Console.WriteLine("Failed to find a solution");
+        Console.WriteLine("Failed to solve board");
         return;
     }
 
@@ -138,14 +172,14 @@ static void Solve(Board board, Solver.Mode mode)
     var index = 0;
     foreach (var move in solution.MoveHistory.Reverse())
     {
-        var automatic = move.IsForced(clone);
+        var automatic = move.IsForced(board);
         if (!automatic)
             manualMoves++;
 
-        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move.Stringify(clone)}");
-        move.Apply(clone);
+        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move.Stringify(board)}");
+        move.Apply(board);
 
-        Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{clone}");
+        Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{board}");
     }
 
     Console.WriteLine();

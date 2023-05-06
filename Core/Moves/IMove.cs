@@ -8,5 +8,7 @@ public interface IMove
 
     void Apply(Board board);
 
+    void Undo(Board board);
+
     string Stringify(Board board);
 }
