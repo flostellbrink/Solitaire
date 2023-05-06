@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Game;
 
 namespace Core.Stacks;
@@ -21,10 +20,9 @@ public class LockableStack : AbstractStack
         Locked = stack.Locked;
     }
 
-    public override IEnumerable<Unit> MovableCards =>
-        Locked || !Cards.Any() ? Enumerable.Empty<Unit>() : new[] { new Unit(new[] { Cards[0] }) };
+    public override int MovableCards => Locked || !Cards.Any() ? 0 : 1;
 
-    public override bool Accepts(Unit unit) => !Locked && !Cards.Any() && unit.Cards.Count == 1;
+    public override bool Accepts(Card card, int count) => !Locked && !Cards.Any() && count == 1;
 
     public override string ToString() => $"Lockable {_index}";
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Game;
 
 namespace Core.Stacks;
@@ -18,27 +17,30 @@ public class Stack : AbstractStack
         _index = stack._index;
     }
 
-    public override IEnumerable<Unit> MovableCards =>
-        Cards
-            .AsEnumerable()
-            .Reverse()
-            .Aggregate(
-                Enumerable.Empty<Unit>(),
-                (result, card) =>
-                    result.Append(
-                        new Unit(
-                            (result.LastOrDefault()?.Cards ?? Enumerable.Empty<Card>())
-                                .Prepend(card)
-                                .ToList()
-                        )
-                    )
-            )
-            .TakeWhile(unit => unit.Valid);
-
-    public override bool Accepts(Unit unit)
+    public override int MovableCards
     {
-        return !Cards.Any() || Cards.Last().CanHold(unit.Cards.First());
+        get
+        {
+            if (!Cards.Any())
+                return 0;
+            if (Cards.Count == 1)
+                return 1;
+
+            var result = 1;
+            var lastCard = Cards.Last();
+            for (var i = Cards.Count - 2; i >= 0; i--)
+            {
+                if (!Cards[i].CanHold(lastCard))
+                    break;
+
+                result++;
+            }
+            return result;
+        }
     }
+
+    public override bool Accepts(Card card, int count) =>
+        !Cards.Any() || Cards.Last().CanHold(card);
 
     public override string ToString() => $"Stack {_index}";
 }

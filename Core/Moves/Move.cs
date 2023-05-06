@@ -39,14 +39,10 @@ internal class Move : IMove
     {
         var source = board.AllStacks[Source];
         var destination = board.AllStacks[Destination];
-        var unit = new Unit(source.Cards.Skip(source.Cards.Count - Count).ToList());
 
-        source.Remove(unit);
-        Debug.Assert(
-            destination.Accepts(unit),
-            $"Destination {destination} does not accept {unit}"
-        );
-        destination.Add(unit);
+        Debug.Assert(destination.Accepts(source.Cards.Last(), Count));
+        destination.Add(source.Cards.Skip(source.Cards.Count - Count));
+        source.Remove(Count);
 
         board.MoveHistory.Push(this);
     }
@@ -55,7 +51,6 @@ internal class Move : IMove
     {
         var source = board.AllStacks[Source];
         var destination = board.AllStacks[Destination];
-        var unit = new Unit(source.Cards.Skip(source.Cards.Count - Count).ToList());
-        return $"Move {unit} from {source} to {destination}";
+        return $"Move {string.Join(", ", source.Cards.Skip(source.Cards.Count - Count))} from {source} to {destination}";
     }
 }

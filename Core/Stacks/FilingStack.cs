@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Game;
 
 namespace Core.Stacks;
@@ -20,13 +19,12 @@ public class FilingStack : AbstractStack
 
     public Value NextIndex => Cards.LastOrDefault()?.Value + 1 ?? Value.N1;
 
-    public override IEnumerable<Unit> MovableCards => Enumerable.Empty<Unit>();
+    public override int MovableCards => 0;
 
-    public override bool Accepts(Unit unit)
+    public override bool Accepts(Card card, int count)
     {
-        if (unit.Cards.Count != 1)
+        if (count != 1)
             return false;
-        var card = unit.Cards.First();
         if (Cards.Any() && card.Color != Cards[0].Color)
             return false;
         if (!Card.NumericValues.Contains(card.Value))

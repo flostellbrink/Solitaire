@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Core.Game;
 
 namespace Core.Stacks;
@@ -9,9 +7,9 @@ public abstract class AbstractStack
 {
     public List<Card> Cards { get; } = new();
 
-    public abstract IEnumerable<Unit> MovableCards { get; }
+    public abstract int MovableCards { get; }
 
-    public abstract bool Accepts(Unit unit);
+    public abstract bool Accepts(Card card, int count);
 
     protected AbstractStack() { }
 
@@ -20,19 +18,19 @@ public abstract class AbstractStack
         Cards = new List<Card>(stack.Cards);
     }
 
-    public void Add(Unit unit)
+    public void Add(IEnumerable<Card> cards)
     {
-        Cards.AddRange(unit.Cards);
+        Cards.AddRange(cards);
     }
 
-    public void Remove(Unit unit)
+    public void Add(Card card)
     {
-        Debug.Assert(MovableCards.Contains(unit), $"{this} does not contain {unit}");
-        foreach (var card in unit.Cards.Reverse())
-        {
-            Debug.Assert(Cards[^1].Equals(card));
-            Cards.RemoveAt(Cards.Count - 1);
-        }
+        Cards.Add(card);
+    }
+
+    public void Remove(int count)
+    {
+        Cards.RemoveRange(Cards.Count - count, count);
     }
 
     public override int GetHashCode()

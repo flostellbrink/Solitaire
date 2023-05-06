@@ -97,28 +97,32 @@ public class Board
     public int Loss =>
         MoveHistory.Count
         + Stacks.Sum(stack => stack.Cards.Count)
-        + (Stacks.Sum(stack => stack.Cards.Count - stack.MovableCards.Count()) * 2)
+        + (Stacks.Sum(stack => stack.Cards.Count - stack.MovableCards) * 2)
         + LockableStacks.Count(locked => locked.Cards.Any(card => card.Value != Value.Dragon))
         + (LockableStacks.Count(locked => !locked.Locked) * 100);
 
     private IEnumerable<Move> AllStandardMoves =>
         AllStacks.SelectMany(
             (source, sourceIndex) =>
-                source.MovableCards.SelectMany(
-                    unit =>
-                        AllStacks
-                            .Select((stack, index) => (stack, index))
-                            .Where(destination => destination.index != sourceIndex)
-                            .Where(destination => destination.stack.Accepts(unit))
-                            .Select(
-                                destination =>
-                                    new Move(sourceIndex, destination.index, unit.Cards.Count)
-                            )
-                )
+                Enumerable
+                    .Range(1, source.MovableCards)
+                    .SelectMany(
+                        count =>
+                            AllStacks
+                                .Select((stack, index) => (stack, index))
+                                .Where(destination => destination.index != sourceIndex)
+                                .Where(
+                                    destination =>
+                                        destination.stack.Accepts(source.Cards[^count], count)
+                                )
+                                .Select(
+                                    destination => new Move(sourceIndex, destination.index, count)
+                                )
+                    )
         );
 
-    private readonly static List<Unit> LockUnits = Card.BaseColors
-        .Select(color => new Unit(new List<Card> { new Card(color, Value.Dragon) }))
+    private readonly static List<Card> LockCards = Card.BaseColors
+        .Select(color => new Card(color, Value.Dragon))
         .ToList();
 
     private IEnumerable<LockMove> AllLockMoves()
@@ -127,11 +131,11 @@ public class Board
             .Select((stack, index) => (stack, index))
             .Where(stack => !stack.stack.Locked);
 
-        foreach (var unit in LockUnits)
+        foreach (var card in LockCards)
         {
             var sources = AllStacks
                 .Select((stack, index) => (stack, index))
-                .Where(stack => stack.stack.MovableCards.Contains(unit))
+                .Where(stack => stack.stack.MovableCards > 0 && stack.stack.Cards.Last() == card)
                 .Select(stack => stack.index)
                 .ToList();
 
@@ -139,11 +143,11 @@ public class Board
                 continue;
 
             var targets = lockableStacks
-                .Where(target => target.stack.Accepts(unit))
+                .Where(target => target.stack.Accepts(card, 1))
                 .Select(target => target.index);
 
             foreach (var target in targets)
-                yield return new LockMove(sources, target, unit.Cards.Count);
+                yield return new LockMove(sources, target);
         }
     }
 

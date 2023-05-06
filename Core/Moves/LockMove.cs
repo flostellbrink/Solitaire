@@ -12,13 +12,10 @@ internal class LockMove : IMove
 
     public readonly int Destination;
 
-    public readonly int Count;
-
-    public LockMove(ICollection<int> sources, int destination, int count)
+    public LockMove(ICollection<int> sources, int destination)
     {
         Sources = sources;
         Destination = destination;
-        Count = count;
     }
 
     public bool IsForced(Board board) => false;
@@ -28,7 +25,6 @@ internal class LockMove : IMove
         var sources = Sources.Select(source => board.AllStacks[source]);
         var destination = (LockableStack)board.AllStacks[Destination];
         var card = sources.First().Cards.Last();
-        var unit = new Unit(new List<Card> { card });
 
         Debug.Assert(destination.Cards.Count <= 1);
         Debug.Assert(destination.Cards.All(card => card.Color == card.Color));
@@ -36,8 +32,8 @@ internal class LockMove : IMove
 
         foreach (var source in sources)
         {
-            source.Remove(unit);
-            destination.Add(unit);
+            source.Remove(1);
+            destination.Add(card);
         }
 
         destination.Locked = true;
