@@ -1,15 +1,14 @@
 ﻿using Core.Game;
 
-namespace Core.Moves
+namespace Core.Moves;
+
+public interface IMove
 {
-    public interface IMove
-    {
-        Unit Unit { get; }
+    Unit Unit { get; }
 
-        bool IsForced();
+    bool IsForced();
 
-        void Apply();
+    void Apply();
 
-        IMove Clone(Board targetBoard);
-    }
+    IMove Clone(Board targetBoard);
 }

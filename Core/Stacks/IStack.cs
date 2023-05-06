@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using Core.Game;
 
-namespace Core.Stacks
+namespace Core.Stacks;
+
+public interface IStack
 {
-    public interface IStack
-    {
-        IEnumerable<Unit> MovableCards { get; }
+    IEnumerable<Unit> MovableCards { get; }
 
-        bool Accepts(Unit unit);
+    bool Accepts(Unit unit);
 
-        void Add(Unit unit);
+    void Add(Unit unit);
 
-        void Remove(Unit unit);
-    }
+    void Remove(Unit unit);
 }

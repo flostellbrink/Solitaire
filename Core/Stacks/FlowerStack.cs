@@ -2,24 +2,21 @@
 using System.Linq;
 using Core.Game;
 
-namespace Core.Stacks
+namespace Core.Stacks;
+
+public class FlowerStack : AbstractStack
 {
-    public class FlowerStack : AbstractStack
-    {
-        public FlowerStack() { }
+    public FlowerStack() { }
 
-        public FlowerStack(FlowerStack flowerStack) : base(flowerStack)
-        {
-        }
+    public FlowerStack(FlowerStack flowerStack) : base(flowerStack) { }
 
-        public override IEnumerable<Unit> MovableCards => Enumerable.Empty<Unit>();
+    public override IEnumerable<Unit> MovableCards => Enumerable.Empty<Unit>();
 
-        public override bool Accepts(Unit unit) =>
-            !Cards.Any() &&
-            unit.Cards.Count == 1 &&
-            unit.Cards.First().Color == Color.Flower &&
-            unit.Cards.First().Value == Value.Flower;
+    public override bool Accepts(Unit unit) =>
+        !Cards.Any()
+        && unit.Cards.Count == 1
+        && unit.Cards.First().Color == Color.Flower
+        && unit.Cards.First().Value == Value.Flower;
 
-        public override string ToString() => "Flower stack";
-    }
+    public override string ToString() => "Flower stack";
 }

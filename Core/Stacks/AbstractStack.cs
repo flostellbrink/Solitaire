@@ -3,41 +3,40 @@ using System.Diagnostics;
 using System.Linq;
 using Core.Game;
 
-namespace Core.Stacks
+namespace Core.Stacks;
+
+public abstract class AbstractStack : IStack
 {
-    public abstract class AbstractStack : IStack
+    public List<Card> Cards { get; } = new();
+
+    public abstract IEnumerable<Unit> MovableCards { get; }
+
+    public abstract bool Accepts(Unit unit);
+
+    protected AbstractStack() { }
+
+    protected AbstractStack(AbstractStack stack)
     {
-        public List<Card> Cards { get; } = new();
+        Cards = new List<Card>(stack.Cards);
+    }
 
-        public abstract IEnumerable<Unit> MovableCards { get; }
+    public void Add(Unit unit)
+    {
+        Cards.AddRange(unit.Cards);
+    }
 
-        public abstract bool Accepts(Unit unit);
-
-        protected AbstractStack() { }
-
-        protected AbstractStack(AbstractStack stack)
+    public void Remove(Unit unit)
+    {
+        Debug.Assert(MovableCards.Contains(unit));
+        foreach (var card in unit.Cards.Reverse())
         {
-            Cards = new List<Card>(stack.Cards);
+            Debug.Assert(Cards[^1].Equals(card));
+            Cards.RemoveAt(Cards.Count - 1);
         }
+    }
 
-        public void Add(Unit unit)
-        {
-            Cards.AddRange(unit.Cards);
-        }
-
-        public void Remove(Unit unit)
-        {
-            Debug.Assert(MovableCards.Contains(unit));
-            foreach (var card in unit.Cards.Reverse())
-            {
-                Debug.Assert(Cards[^1].Equals(card));
-                Cards.RemoveAt(Cards.Count - 1);
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return Cards.GetCollectionHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return Cards.GetCollectionHashCode();
     }
 }
