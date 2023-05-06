@@ -1,16 +1,27 @@
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
-namespace Server;
+var builder = WebApplication.CreateBuilder(args);
 
-public static class Program
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(
+    c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Server", Version = "v1" })
+);
+
+// Build and run
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Server v1"));
 }
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllers();

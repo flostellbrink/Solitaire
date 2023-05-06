@@ -14,3 +14,6 @@ dotnet_diagnostic.CA2201.severity = none
 
 # Hard enough to name things without avoiding specific suffixes
 dotnet_diagnostic.CA1711.severity = none
+
+# Sealing programs for top level programs is impossible
+dotnet_diagnostic.CA1852.severity = none
