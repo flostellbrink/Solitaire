@@ -47,7 +47,6 @@ internal class LockMove : IMove
         Debug.Assert(destination.Cards.All(card => card.Value == Value.Dragon));
 
         board.MoveHistory.Push(this);
-        board.ApplyForcedMoves();
     }
 
     public string Stringify(Board board)

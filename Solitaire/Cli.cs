@@ -126,6 +126,7 @@ static void Solve(Board board, Solver.Mode mode)
     // Solve the original board
     var solver = new Solver(board, mode);
     var solution = solver.Solve();
+    Console.WriteLine();
     if (solution == null)
     {
         Console.WriteLine("Failed to find a solution");
@@ -138,11 +139,12 @@ static void Solve(Board board, Solver.Mode mode)
     foreach (var move in solution.MoveHistory.Reverse())
     {
         var automatic = move.IsForced(clone);
-        move.Apply(clone);
-
         if (!automatic)
             manualMoves++;
-        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move}");
+
+        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move.Stringify(clone)}");
+        move.Apply(clone);
+
         Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{clone}");
     }
 

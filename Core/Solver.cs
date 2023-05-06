@@ -100,6 +100,7 @@ public class Solver
         {
             var clone = new Board(board);
             move.Apply(clone);
+            clone.ApplyForcedMoves();
             AddToFrontier(clone);
         }
 

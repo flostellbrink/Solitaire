@@ -49,7 +49,6 @@ internal class Move : IMove
         destination.Add(unit);
 
         board.MoveHistory.Push(this);
-        board.ApplyForcedMoves();
     }
 
     public string Stringify(Board board)

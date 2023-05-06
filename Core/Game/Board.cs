@@ -157,6 +157,7 @@ public class Board
             {
                 var clone = new Board(this);
                 move.Apply(clone);
+                clone.ApplyForcedMoves();
                 return clone.GetHashCode();
             },
             GetHashCode()
