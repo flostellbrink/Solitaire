@@ -2,8 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net7</TargetFramework>
-
         <IsPackable>false</IsPackable>
+
+        <Nullable>enable</Nullable>
+        <AnalysisMode>Recommended</AnalysisMode>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
