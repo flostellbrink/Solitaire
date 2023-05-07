@@ -60,11 +60,11 @@ public record LockMove(ICollection<int> Sources, int Destination) : IMove
         var popped = board.MoveHistory.Pop();
         Debug.Assert(
             popped == (IMove)this,
-            $"Expected {Stringify(board)}, got {popped.Stringify(board)}."
+            $"Expected {ToString(board)}, got {popped.ToString(board)}."
         );
     }
 
-    public string Stringify(Board board)
+    public string ToString(Board board)
     {
         var card = board.AllStacks[Sources.First()].Cards.Last();
         var sources = Sources.Select(source => board.AllStacks[source]);

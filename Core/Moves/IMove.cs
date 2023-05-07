@@ -10,5 +10,5 @@ public interface IMove
 
     void Undo(Board board);
 
-    string Stringify(Board board);
+    string ToString(Board board);
 }

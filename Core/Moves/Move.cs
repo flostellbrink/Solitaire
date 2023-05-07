@@ -48,11 +48,11 @@ public record Move(int Source, int Destination, int Count) : IMove
         var popped = board.MoveHistory.Pop();
         Debug.Assert(
             popped == (IMove)this,
-            $"Expected {Stringify(board)}, got {popped.Stringify(board)}."
+            $"Expected {ToString(board)}, got {popped.ToString(board)}."
         );
     }
 
-    public string Stringify(Board board)
+    public string ToString(Board board)
     {
         var source = board.AllStacks[Source];
         var destination = board.AllStacks[Destination];

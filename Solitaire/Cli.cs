@@ -176,7 +176,7 @@ static void Solve(Board board, Mode mode)
         if (!automatic)
             manualMoves++;
 
-        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move.Stringify(board)}");
+        Console.Write($"({++index}/{solution.MoveHistory.Count}) {move.ToString(board)}");
         move.Apply(board);
 
         Console.WriteLine(automatic ? " (automatic)\n" : $"\n\n{board}");
@@ -211,11 +211,11 @@ static void Play(Board board)
         }
 
         var selectedMove = "Chose your move".AskForIndexedDecision(
-            moves.Select(m => m.Stringify(board)).ToArray()
+            moves.Select(m => m.ToString(board)).ToArray()
         );
         Console.WriteLine($"Selected move: {selectedMove}");
         Console.WriteLine();
-        moves.Single(m => m.Stringify(board) == selectedMove).Apply(board);
+        moves.Single(m => m.ToString(board) == selectedMove).Apply(board);
     }
 }
 

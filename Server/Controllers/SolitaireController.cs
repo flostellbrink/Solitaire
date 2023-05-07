@@ -40,6 +40,6 @@ public class SolitaireController : ControllerBase
         if (nextMove == null)
             return "Good job!";
 
-        return $"You got this! {nextMove.Stringify(board)} :)";
+        return $"You got this! {nextMove.ToString(board)} :)";
     }
 }
