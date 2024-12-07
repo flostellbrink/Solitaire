@@ -27,10 +27,9 @@ public class Stack : AbstractStack
                 return 1;
 
             var result = 1;
-            var lastCard = Cards.Last();
             for (var i = Cards.Count - 2; i >= 0; i--)
             {
-                if (!Cards[i].CanHold(lastCard))
+                if (!Cards[i].CanHold(Cards[i + 1]))
                     break;
 
                 result++;
