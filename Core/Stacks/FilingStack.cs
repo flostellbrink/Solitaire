@@ -25,7 +25,7 @@ public class FilingStack : AbstractStack
     {
         if (count != 1)
             return false;
-        if (Cards.Any() && card.Color != Cards[0].Color)
+        if (Cards.Count != 0 && card.Color != Cards[0].Color)
             return false;
         if (!Card.NumericValues.Contains(card.Value))
             return false;

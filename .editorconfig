@@ -17,3 +17,9 @@ dotnet_diagnostic.CA1711.severity = none
 
 # Sealing programs for top level programs is impossible
 dotnet_diagnostic.CA1852.severity = none
+
+# Don't require XML docs for everything
+dotnet_diagnostic.CS1591.severity = none
+
+# Allow usage of enumerable (TODO: revisit this later)
+dotnet_diagnostic.CA1859.severity = none

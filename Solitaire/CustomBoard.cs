@@ -7,9 +7,9 @@ namespace Solitaire;
 
 public class CustomBoard : Board
 {
-    private static readonly Color[] Colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToArray();
+    private static readonly Color[] Colors = Enum.GetValues<Color>().Cast<Color>().ToArray();
 
-    private static readonly Value[] Values = Enum.GetValues(typeof(Value))
+    private static readonly Value[] Values = Enum.GetValues<Value>()
         .Cast<Value>()
         .Except(new[] { Value.None, Value.Flower })
         .ToArray();

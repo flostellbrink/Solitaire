@@ -67,9 +67,9 @@ public class Board
         Debug.Assert(GetHashCode() == board.GetHashCode());
     }
 
-    public bool Solved => Stacks.All(stack => !stack.Cards.Any());
+    public bool Solved => Stacks.All(stack => stack.Cards.Count == 0);
 
-    public bool HardModeValid => FilingStacks.All(stack => !stack.Cards.Any()) || Solved;
+    public bool HardModeValid => FilingStacks.All(stack => stack.Cards.Count == 0) || Solved;
 
     public bool IsValid()
     {
@@ -82,7 +82,7 @@ public class Board
         var cardsOnBoard = abstractStacks.SelectMany(stack => stack.Cards).ToList();
 
         var missingCards = Card.FullSet.ExceptQuantitative(cardsOnBoard).ToList();
-        if (missingCards.Any())
+        if (missingCards.Count != 0)
         {
             Console.Error.WriteLine(
                 $"The following cards are missing on this board: {string.Join(", ", missingCards)}"
@@ -90,14 +90,14 @@ public class Board
         }
 
         var extraCards = cardsOnBoard.ExceptQuantitative(Card.FullSet).ToList();
-        if (extraCards.Any())
+        if (extraCards.Count != 0)
         {
             Console.Error.WriteLine(
                 $"The following cards should not be on this board: {string.Join(", ", extraCards)}"
             );
         }
 
-        return !extraCards.Any() && !missingCards.Any();
+        return extraCards.Count == 0 && missingCards.Count == 0;
     }
 
     public int Loss =>

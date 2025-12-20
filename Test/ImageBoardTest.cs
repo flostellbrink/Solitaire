@@ -81,8 +81,8 @@ public class ImageBoardTest
     [Fact]
     public void GenerateTemplateCode()
     {
-        var colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToArray();
-        var values = Enum.GetValues(typeof(Value)).Cast<Value>().ToArray();
+        var colors = Enum.GetValues<Color>().Cast<Color>().ToArray();
+        var values = Enum.GetValues<Value>().Cast<Value>().ToArray();
 
         var templatePaths = Directory.GetFiles($"{AppContext.BaseDirectory}/../../../Templates");
         foreach (var templatePath in templatePaths)

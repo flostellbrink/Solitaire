@@ -21,7 +21,7 @@ public class Stack : AbstractStack
     {
         get
         {
-            if (!Cards.Any())
+            if (Cards.Count == 0)
                 return 0;
             if (Cards.Count == 1)
                 return 1;
@@ -39,7 +39,7 @@ public class Stack : AbstractStack
     }
 
     public override bool Accepts(Card card, int count) =>
-        !Cards.Any() || Cards.Last().CanHold(card);
+        Cards.Count == 0 || Cards.Last().CanHold(card);
 
     public override string ToString() => $"Stack {_index}";
 }

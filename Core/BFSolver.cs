@@ -41,7 +41,7 @@ public class BFSolver
         }
     }
 
-    private IEnumerable<Board>? GetFromFrontier()
+    private List<Board>? GetFromFrontier()
     {
         lock (Frontier)
         {

@@ -204,7 +204,7 @@ static void Play(Board board)
         }
 
         var moves = board.DistinctMoves.ToArray();
-        if (!moves.Any())
+        if (moves.Length == 0)
         {
             Console.WriteLine("No moves left, you lose.");
             return;

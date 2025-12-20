@@ -60,7 +60,7 @@ public class DFSolver
 
     private void SolveIteratively()
     {
-        while (stack.Any())
+        while (stack.Count != 0)
         {
             var state = stack.Peek();
             if (state.ForcedMoves == null)
