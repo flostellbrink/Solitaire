@@ -24,58 +24,33 @@ public class ImageBoardTest
     private static Image<Rgba32> LoadImage(string imageName) =>
         Image.Load<Rgba32>($"{AppContext.BaseDirectory}/../../../Images/{imageName}.png");
 
+    class ImagePathGenerator : TheoryData<string>
+    {
+        public ImagePathGenerator()
+        {
+            foreach (string path in Directory.GetFiles($"{AppContext.BaseDirectory}/../../../Images"))
+            {
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                Console.WriteLine($"Adding image path: {fileName}");
+                if (!string.IsNullOrWhiteSpace(fileName))
+                    Add(fileName);
+            }
+        }
+    }
+
     [Theory]
-    [InlineData("fresh")]
-    [InlineData("full")]
-    [InlineData("lockable")]
-    [InlineData("1")]
-    [InlineData("2")]
-    [InlineData("3")]
-    [InlineData("4")]
-    [InlineData("5")]
-    [InlineData("6")]
-    [InlineData("7")]
-    [InlineData("8")]
-    [InlineData("9")]
-    [InlineData("10")]
-    [InlineData("11")]
-    [InlineData("12")]
-    [InlineData("13")]
-    [InlineData("14")]
-    [InlineData("15")]
-    [InlineData("16")]
-    [InlineData("17")]
-    [InlineData("18")]
-    [InlineData("19")]
-    [InlineData("20")]
-    [InlineData("21")]
-    [InlineData("22")]
-    [InlineData("23")]
-    [InlineData("24")]
-    [InlineData("25")]
-    [InlineData("26")]
-    [InlineData("27")]
-    [InlineData("28")]
-    [InlineData("29")]
-    [InlineData("30")]
-    [InlineData("31")]
-    [InlineData("32")]
-    [InlineData("33")]
-    [InlineData("34")]
+    [ClassData(typeof(ImagePathGenerator))]
     public void ParsesValidBoard(string imageName)
     {
         var board = new ImageBoard(LoadImage(imageName));
         _output.WriteLine(board.ToString());
-        Assert.True(board.IsValid());
-    }
 
-    [Theory]
-    [InlineData("35")]
-    public void ParsesSolvedBoard(string imageName)
-    {
-        var board = new ImageBoard(LoadImage(imageName));
-        _output.WriteLine(board.ToString());
-        Assert.True(board.Solved);
+        if (imageName == "solved") {
+            Assert.True(board.Solved);
+            return;
+        }
+
+        Assert.True(board.IsValid());
     }
 
     [Fact]
