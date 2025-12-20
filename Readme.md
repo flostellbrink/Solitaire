@@ -23,6 +23,13 @@ Or with Docker Compose:
 
 - `docker compose up --build`
 
+### GHCR image
+
+The GitHub Actions workflow publishes the server image to GHCR:
+
+- `ghcr.io/flostellbrink/solitaire-server:latest`
+- `ghcr.io/flostellbrink/solitaire-server:<git-sha>`
+
 ### iOS Shortcut
 
 Just take a screenshot in-game and share it with [this shortcut](https://www.icloud.com/shortcuts/29b3fe7af90f4337a5e749a26d515983) :)
