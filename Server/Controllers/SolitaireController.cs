@@ -15,7 +15,8 @@ namespace Server.Controllers;
 public class SolitaireController : ControllerBase
 {
     [HttpPost("solvable")]
-    public static string Solvable([Required] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public string Solvable([FromForm, Required] IFormFile file)
     {
         AnsiColorHelper.Enabled = false;
         Console.WriteLine($"Got image {file.FileName} with {file.Length} bytes");
