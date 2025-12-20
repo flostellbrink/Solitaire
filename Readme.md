@@ -8,6 +8,21 @@ This tool solves boards automatically and prints a step by step solution.
 
 There is also a server version that receives screenshots and helps out with the next move.
 
+### Docker
+
+Build and run the server:
+
+- `docker build -f Server/Dockerfile -t solitaire-server .`
+- `docker run --rm -p 5000:8080 -e ASPNETCORE_ENVIRONMENT=Development solitaire-server`
+
+Then open:
+
+- `http://localhost:5000/swagger` (Swagger UI, in Development)
+
+Or with Docker Compose:
+
+- `docker compose up --build`
+
 ### iOS Shortcut
 
 Just take a screenshot in-game and share it with [this shortcut](https://www.icloud.com/shortcuts/29b3fe7af90f4337a5e749a26d515983) :)
