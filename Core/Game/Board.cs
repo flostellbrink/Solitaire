@@ -30,8 +30,8 @@ public class Board
     protected Board()
     {
         MoveHistory = new();
-        LockableStacks = Card.BaseColors
-            .Select((_, index) => new LockableStack(index + 1))
+        LockableStacks = Card
+            .BaseColors.Select((_, index) => new LockableStack(index + 1))
             .ToList();
         FlowerStack = new();
         FilingStacks = Card.BaseColors.Select((_, index) => new FilingStack(index)).ToList();
@@ -49,8 +49,8 @@ public class Board
     public Board(Board board)
     {
         MoveHistory = new Stack<IMove>(board.MoveHistory.Reverse());
-        LockableStacks = board.LockableStacks
-            .Select(lockable => new LockableStack(lockable))
+        LockableStacks = board
+            .LockableStacks.Select(lockable => new LockableStack(lockable))
             .ToList();
         FlowerStack = new FlowerStack(board.FlowerStack);
         FilingStacks = board.FilingStacks.Select(filing => new FilingStack(filing)).ToList();
@@ -112,11 +112,10 @@ public class Board
         var sources = AllStacks
             .Select((stack, index) => (stack, index))
             .Where(stack => stack.stack.MovableCards > 0)
-            .SelectMany(
-                stack =>
-                    Enumerable
-                        .Range(1, stack.stack.MovableCards)
-                        .Select(count => (stack.stack, stack.index, count))
+            .SelectMany(stack =>
+                Enumerable
+                    .Range(1, stack.stack.MovableCards)
+                    .Select(count => (stack.stack, stack.index, count))
             )
             .ToList();
 
@@ -130,8 +129,8 @@ public class Board
         }
     }
 
-    private readonly static List<Card> LockCards = Card.BaseColors
-        .Select(color => new Card(color, Value.Dragon))
+    private static readonly List<Card> LockCards = Card
+        .BaseColors.Select(color => new Card(color, Value.Dragon))
         .ToList();
 
     private IEnumerable<LockMove> AllLockMoves()
@@ -209,11 +208,10 @@ public class Board
             separator,
             maxStackWidth,
             LockableStacks
-                .Select(
-                    stack =>
-                        stack.Locked
-                            ? "Locked"
-                            : stack.Cards.LastOrDefault()?.ToString() ?? string.Empty
+                .Select(stack =>
+                    stack.Locked
+                        ? "Locked"
+                        : stack.Cards.LastOrDefault()?.ToString() ?? string.Empty
                 )
                 .Concat(
                     Enumerable

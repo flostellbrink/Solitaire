@@ -25,10 +25,11 @@ public class CustomBoard : Board
         Value.N6,
         Value.N7,
         Value.N8,
-        Value.N9
+        Value.N9,
     };
 
-    public CustomBoard() : base()
+    public CustomBoard()
+        : base()
     {
         foreach (var lockableStack in LockableStacks)
             PopulateLockable(lockableStack);

@@ -12,7 +12,8 @@ public class Stack : AbstractStack
         _index = index;
     }
 
-    public Stack(Stack stack) : base(stack)
+    public Stack(Stack stack)
+        : base(stack)
     {
         _index = stack._index;
     }

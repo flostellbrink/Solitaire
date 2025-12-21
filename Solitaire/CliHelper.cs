@@ -12,7 +12,7 @@ public enum YesNo
     Yes,
 
     [Description("No")]
-    No
+    No,
 }
 
 public static class CliHelper
@@ -25,7 +25,8 @@ public static class CliHelper
         return Enum.Parse<ConsoleKey>(value);
     }
 
-    public static T AskForDecision<T>(this string format, params T[] values) where T : Enum
+    public static T AskForDecision<T>(this string format, params T[] values)
+        where T : Enum
     {
         var valueStrings = values.Select(value => value.ToDescription()).ToList();
         var options = valueStrings.Select(value => $"({value[0]}){value[1..]}");

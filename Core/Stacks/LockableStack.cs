@@ -13,7 +13,8 @@ public class LockableStack : AbstractStack
         _index = index;
     }
 
-    public LockableStack(LockableStack stack) : base(stack)
+    public LockableStack(LockableStack stack)
+        : base(stack)
     {
         _index = stack._index;
         Locked = stack.Locked;

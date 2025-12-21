@@ -10,7 +10,7 @@ public enum Color
     Black,
     Green,
     Red,
-    Flower
+    Flower,
 }
 
 public enum Value
@@ -44,7 +44,7 @@ public enum Value
     [Description("9")]
     N9,
     Dragon,
-    Flower
+    Flower,
 }
 
 public record Card(Color Color, Value Value)
@@ -61,15 +61,15 @@ public record Card(Color Color, Value Value)
         Value.N6,
         Value.N7,
         Value.N8,
-        Value.N9
+        Value.N9,
     };
 
     public static IEnumerable<Card> FullSet =>
         BaseColors
             .SelectMany(color => BaseValues.Select(value => new Card(color, value)))
             .Concat(
-                BaseColors.SelectMany(
-                    color => Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Dragon))
+                BaseColors.SelectMany(color =>
+                    Enumerable.Range(0, 4).Select(_ => new Card(color, Value.Dragon))
                 )
             )
             .Append(new Card(Color.Flower, Value.Flower));
@@ -85,7 +85,7 @@ public record Card(Color Color, Value Value)
             Value.N6,
             Value.N7,
             Value.N8,
-            Value.N9
+            Value.N9,
         };
 
     public bool CanHold(Card other)
@@ -97,14 +97,13 @@ public record Card(Color Color, Value Value)
         return Value - other.Value == 1;
     }
 
-    private static readonly Dictionary<Color, AnsiColor> AnsiColors =
-        new()
-        {
-            { Color.Black, AnsiColor.None },
-            { Color.Red, AnsiColor.ForegroundRed },
-            { Color.Green, AnsiColor.ForegroundGreen },
-            { Color.Flower, AnsiColor.ForegroundYellow },
-        };
+    private static readonly Dictionary<Color, AnsiColor> AnsiColors = new()
+    {
+        { Color.Black, AnsiColor.None },
+        { Color.Red, AnsiColor.ForegroundRed },
+        { Color.Green, AnsiColor.ForegroundGreen },
+        { Color.Flower, AnsiColor.ForegroundYellow },
+    };
 
     public override string ToString() =>
         $"{Color.ToDescription()} {Value.ToDescription()}".Colorize(AnsiColors[Color]);

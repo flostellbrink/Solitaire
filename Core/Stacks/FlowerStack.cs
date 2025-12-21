@@ -6,7 +6,8 @@ public class FlowerStack : AbstractStack
 {
     public FlowerStack() { }
 
-    public FlowerStack(FlowerStack flowerStack) : base(flowerStack) { }
+    public FlowerStack(FlowerStack flowerStack)
+        : base(flowerStack) { }
 
     public override int MovableCards => 0;
 

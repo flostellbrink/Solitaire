@@ -12,7 +12,8 @@ public class FilingStack : AbstractStack
         _index = index;
     }
 
-    public FilingStack(FilingStack stack) : base(stack)
+    public FilingStack(FilingStack stack)
+        : base(stack)
     {
         _index = stack._index;
     }

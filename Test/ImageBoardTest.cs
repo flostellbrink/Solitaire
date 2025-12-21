@@ -28,7 +28,9 @@ public class ImageBoardTest
     {
         public ImagePathGenerator()
         {
-            foreach (string path in Directory.GetFiles($"{AppContext.BaseDirectory}/../../../Images"))
+            foreach (
+                string path in Directory.GetFiles($"{AppContext.BaseDirectory}/../../../Images")
+            )
             {
                 var fileName = Path.GetFileNameWithoutExtension(path);
                 Console.WriteLine($"Adding image path: {fileName}");
@@ -45,7 +47,8 @@ public class ImageBoardTest
         var board = new ImageBoard(LoadImage(imageName));
         _output.WriteLine(board.ToString());
 
-        if (imageName == "solved") {
+        if (imageName == "solved")
+        {
             Assert.True(board.Solved);
             return;
         }
@@ -69,11 +72,11 @@ public class ImageBoardTest
             var parts = fileName.Split(' ');
             Assert.Equal(2, parts.Length);
 
-            var color = colors.Single(
-                color => color.ToDescription().Equals(parts[0], StringComparison.OrdinalIgnoreCase)
+            var color = colors.Single(color =>
+                color.ToDescription().Equals(parts[0], StringComparison.OrdinalIgnoreCase)
             );
-            var value = values.Single(
-                value => value.ToDescription().Equals(parts[1], StringComparison.OrdinalIgnoreCase)
+            var value = values.Single(value =>
+                value.ToDescription().Equals(parts[1], StringComparison.OrdinalIgnoreCase)
             );
             var card = new Card(color, value);
             var image = Image.Load<Rgba32>(templatePath);

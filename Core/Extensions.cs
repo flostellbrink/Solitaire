@@ -8,7 +8,8 @@ namespace Core;
 
 public static class Extensions
 {
-    public static string ToDescription<T>(this T value) where T : Enum
+    public static string ToDescription<T>(this T value)
+        where T : Enum
     {
         var stringified = value.ToString() ?? string.Empty;
 
@@ -17,7 +18,8 @@ public static class Extensions
                 ?.GetCustomAttributes(typeof(DescriptionAttribute), false)
                 .Cast<DescriptionAttribute>()
                 .Select(attribute => attribute.Description)
-                .FirstOrDefault() ?? stringified;
+                .FirstOrDefault()
+            ?? stringified;
     }
 
     public static IEnumerable<(T, T)> ConsecutivePairs<T>(this IEnumerable<T> list)
@@ -87,23 +89,19 @@ public static class Extensions
     public static IEnumerable<T> ExceptQuantitative<T>(
         this IEnumerable<T> enumerable,
         IEnumerable<T> except
-    ) where T : IEquatable<T>
+    )
+        where T : IEquatable<T>
     {
         var exceptGroups = except
             .GroupBy(value => value)
             .ToLookup(group => group.Key, group => group.Count());
         return enumerable
             .GroupBy(value => value)
-            .Select(
-                group =>
-                    (
-                        group.Key,
-                        Count: group.Count(),
-                        Other: exceptGroups[group.Key].FirstOrDefault()
-                    )
+            .Select(group =>
+                (group.Key, Count: group.Count(), Other: exceptGroups[group.Key].FirstOrDefault())
             )
-            .SelectMany(
-                entry => Enumerable.Repeat(entry.Key, Math.Max(0, entry.Count - entry.Other))
+            .SelectMany(entry =>
+                Enumerable.Repeat(entry.Key, Math.Max(0, entry.Count - entry.Other))
             );
     }
 }

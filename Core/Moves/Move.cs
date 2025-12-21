@@ -18,7 +18,7 @@ public record Move(int Source, int Destination, int Count) : IMove
         {
             FlowerStack _ when card.Color == Color.Flower && card.Value == Value.Flower => true,
             FilingStack _ when board.HighestAutomaticFilingValue >= card.Value => true,
-            _ => false
+            _ => false,
         };
     }
 
