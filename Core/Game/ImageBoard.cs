@@ -90,13 +90,7 @@ public partial class ImageBoard : Board
 
         var center = Clamp(0.7, minScale, maxScale);
 
-        var stages = new (double Step, double Radius)[]
-        {
-            (0.10, 0.60),
-            (0.03, 0.18),
-            (0.01, 0.06),
-            (0.003, 0.018),
-        };
+        var stages = new (double Step, double Radius)[] { (0.03, 0.15), (0.01, 0.06) };
 
         foreach (var (step, radius) in stages)
         {
