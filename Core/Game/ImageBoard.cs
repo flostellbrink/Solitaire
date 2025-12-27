@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -156,18 +155,6 @@ public partial class ImageBoard : Board
         var scale = FindScale(boardImage);
         using var resizedImage = ResizeToScale(boardImage, scale);
 
-        Scalar GetColor(Card card)
-        {
-            return card.Color switch
-            {
-                Color.Red => Scalar.Red,
-                Color.Black => Scalar.Black,
-                Color.Green => Scalar.Green,
-                Color.Flower => Scalar.Yellow,
-                _ => Scalar.Gray,
-            };
-        }
-
         var cards = FindCards(resizedImage).ToList();
 
         var topRow = (int)(resizedImage.Height * 0.155);
@@ -283,39 +270,51 @@ public partial class ImageBoard : Board
 
         // MARK: Debug
 
-        void drawRow(int y)
-        {
-            Cv2.Line(
-                resizedImage,
-                new Point(0, y),
-                new Point(resizedImage.Width, y),
-                new Scalar(255),
-                1
-            );
-        }
-        drawRow(topRow);
-        foreach (var row in stacks)
-            drawRow(row);
+        // Scalar GetColor(Card card)
+        // {
+        //     return card.Color switch
+        //     {
+        //         Color.Red => Scalar.Red,
+        //         Color.Black => Scalar.Black,
+        //         Color.Green => Scalar.Green,
+        //         Color.Flower => Scalar.Yellow,
+        //         _ => Scalar.Gray,
+        //     };
+        // }
 
-        void drawColumn(int x)
-        {
-            Cv2.Line(
-                resizedImage,
-                new Point(x, 0),
-                new Point(x, resizedImage.Height),
-                new Scalar(255),
-                1
-            );
-        }
+        // void drawRow(int y)
+        // {
+        //     Cv2.Line(
+        //         resizedImage,
+        //         new Point(0, y),
+        //         new Point(resizedImage.Width, y),
+        //         new Scalar(255),
+        //         1
+        //     );
+        // }
+        // drawRow(topRow);
+        // foreach (var row in stacks)
+        //     drawRow(row);
 
-        drawColumn(flowerColumn);
-        foreach (var x in verticalLines)
-            drawColumn(x);
+        // void drawColumn(int x)
+        // {
+        //     Cv2.Line(
+        //         resizedImage,
+        //         new Point(x, 0),
+        //         new Point(x, resizedImage.Height),
+        //         new Scalar(255),
+        //         1
+        //     );
+        // }
 
-        foreach (var (card, score, rect) in cards)
-            Cv2.Rectangle(resizedImage, rect, GetColor(card), 1);
+        // drawColumn(flowerColumn);
+        // foreach (var x in verticalLines)
+        //     drawColumn(x);
 
-        var name = Random.Shared.Next().ToString(CultureInfo.InvariantCulture);
-        resizedImage.SaveImage($"../../../{name}_resized.png");
+        // foreach (var (card, score, rect) in cards)
+        //     Cv2.Rectangle(resizedImage, rect, GetColor(card), 1);
+
+        // var name = Random.Shared.Next().ToString(CultureInfo.InvariantCulture);
+        // resizedImage.SaveImage($"../../../{name}_resized.png");
     }
 }
