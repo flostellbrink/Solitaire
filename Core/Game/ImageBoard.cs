@@ -33,6 +33,7 @@ public partial class ImageBoard : Board
         [
             .. Directory
                 .GetFiles("Templates")
+                .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                 .Select(static path =>
                 {
                     var fileName = Path.GetFileNameWithoutExtension(path);
