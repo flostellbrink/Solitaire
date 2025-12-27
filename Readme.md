@@ -9,8 +9,7 @@ This tool solves boards automatically and prints a step by step solution.
 There is also a server version that receives screenshots and helps out with the next move. Start it with:
 
 ```bash
-cd Server
-dotnet run
+docker compose up
 ```
 
 ### GHCR image

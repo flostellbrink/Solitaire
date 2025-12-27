@@ -1,4 +1,4 @@
-name: docker-ghcr
+name: image-server
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Server/Dockerfile
+          file: DockerfileServer
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
