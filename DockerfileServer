@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM ghcr.io/flostellbrink/solitaire-base:latest AS build
 WORKDIR /src
 
 COPY ["Solitaire.sln", "./"]
@@ -9,7 +9,7 @@ RUN dotnet restore "Server/Server.csproj"
 COPY . .
 RUN dotnet publish "Server/Server.csproj" -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM ghcr.io/flostellbrink/solitaire-base:latest AS final
 WORKDIR /app
 
 ENV ASPNETCORE_URLS=http://+:8080

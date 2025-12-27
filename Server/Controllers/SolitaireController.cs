@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Core;
 using Core.Game;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using OpenCvSharp;
 
 namespace Server.Controllers;
 
@@ -16,15 +17,17 @@ public class SolitaireController : ControllerBase
 {
     [HttpPost("solvable")]
     [Consumes("multipart/form-data")]
-    public string Solvable([FromForm, Required] IFormFile file)
+    public async Task<string> Solvable([FromForm, Required] IFormFile file)
     {
         AnsiColorHelper.Enabled = false;
         Console.WriteLine($"Got image {file.FileName} with {file.Length} bytes");
 
-        using var image = Image.Load<Rgba32>(file.OpenReadStream());
-        Console.WriteLine($"Loaded image with {image.Width}x{image.Height} pixels");
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        using var mat = Mat.ImDecode(memoryStream.ToArray(), ImreadModes.Color);
+        Console.WriteLine($"Loaded image with {mat.Width}x{mat.Height} pixels");
 
-        var board = new ImageBoard(image);
+        var board = new ImageBoard(mat);
         Console.WriteLine(board.ToString());
         if (!board.IsValid())
             return "Sorry cannot read this board.";

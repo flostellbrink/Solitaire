@@ -1,9 +1,30 @@
 services:
   server:
-    build:
-      context: .
-      dockerfile: DockerfileServer
+    image: ghcr.io/flostellbrink/solitaire-base:latest
+    platform: linux/amd64
     ports:
-      - "5000:8080"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      - "5000:5000"
+    volumes:
+      - ./:/app
+      - /app/Core/bin
+      - /app/Core/obj
+      - /app/Server/bin
+      - /app/Server/obj
+    working_dir: /app/Server
+    command: ["dotnet", "--urls", "http://0.0.0.0:5000"]
+    stop_signal: SIGINT
+
+  test:
+    image: ghcr.io/flostellbrink/solitaire-base:latest
+    platform: linux/amd64
+    volumes:
+      - ./:/app
+      - /app/Core/bin
+      - /app/Core/obj
+      - /app/Test/bin
+      - /app/Test/obj
+    working_dir: /app/Test
+    command: ["dotnet", "test", "--logger:trx"]
+    stop_signal: SIGINT
+    profiles:
+      - test

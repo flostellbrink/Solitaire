@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="OpenCvSharp4" Version="4.11.0.20250507" />
-    <PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.11.0.20250507" />
   </ItemGroup>
 
   <ItemGroup>
