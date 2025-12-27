@@ -151,7 +151,7 @@ public class Board
                 continue;
 
             var targets = lockableStacks
-                .Where(target => target.stack.Accepts(card, 1))
+                .Where(target => target.stack.Accepts(card, SymbolsPerColor))
                 .Select(target => target.index);
 
             foreach (var target in targets)
