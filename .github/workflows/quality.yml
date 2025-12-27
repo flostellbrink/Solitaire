@@ -2,17 +2,21 @@ name: quality
 
 on: [push]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flostellbrink/solitaire-base:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: "10.0.x"
+      - uses: actions/checkout@v4
 
       - name: Build
         run: dotnet build
