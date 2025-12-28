@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using Core;
 
 namespace Solitaire;
@@ -93,5 +94,18 @@ public static class CliHelper
                 $"{question} ({min}-{max}) - {line} is not a number between {min} and {max}: "
             );
         }
+    }
+
+    public static string AskForMultiline(this string question, Func<string, bool> predicate)
+    {
+        Console.WriteLine(question);
+        var builder = new StringBuilder();
+        while (true)
+        {
+            builder.AppendLine(Console.ReadLine());
+            if (predicate(builder.ToString()))
+                break;
+        }
+        return builder.ToString();
     }
 }

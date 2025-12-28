@@ -41,6 +41,8 @@ public static partial class AnsiColorHelper
     [GeneratedRegex("\u001b[^m]+m", RegexOptions.Compiled)]
     private static partial Regex AnsiRegex();
 
+    public static string StripAnsi(this string value) => AnsiRegex().Replace(value, string.Empty);
+
     public static int AnsiInvisibleLength(this string value) =>
         AnsiRegex().Matches(value).Sum(match => match.Length);
 

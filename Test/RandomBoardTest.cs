@@ -16,7 +16,7 @@ public class RandomBoardTest
     public void BoardValid()
     {
         var boards = Enumerable.Range(0, 100).Select((_) => new RandomBoard());
-        Assert.True(boards.All(board => board.IsValid()));
+        Assert.True(boards.All(board => board.IsValid(null)));
     }
 
     [Fact]

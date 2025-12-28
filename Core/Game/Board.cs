@@ -71,7 +71,7 @@ public class Board
 
     public bool HardModeValid => FilingStacks.All(stack => stack.Cards.Count == 0) || Solved;
 
-    public bool IsValid()
+    public bool IsValid(Action<string>? feedback)
     {
         var abstractStacks = Enumerable
             .Empty<AbstractStack>()
@@ -84,7 +84,7 @@ public class Board
         var missingCards = Card.FullSet.ExceptQuantitative(cardsOnBoard).ToList();
         if (missingCards.Count != 0)
         {
-            Console.Error.WriteLine(
+            feedback?.Invoke(
                 $"The following cards are missing on this board: {string.Join(", ", missingCards)}"
             );
         }
@@ -92,7 +92,7 @@ public class Board
         var extraCards = cardsOnBoard.ExceptQuantitative(Card.FullSet).ToList();
         if (extraCards.Count != 0)
         {
-            Console.Error.WriteLine(
+            feedback?.Invoke(
                 $"The following cards should not be on this board: {string.Join(", ", extraCards)}"
             );
         }

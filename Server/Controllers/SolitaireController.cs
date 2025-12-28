@@ -29,7 +29,7 @@ public class SolitaireController : ControllerBase
 
         var board = new ImageBoard(mat);
         Console.WriteLine(board.ToString());
-        if (!board.IsValid())
+        if (!board.IsValid(Console.Error.WriteLine))
             return "Sorry cannot read this board.";
         if (board.Solved)
             return "Good job!";

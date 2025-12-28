@@ -44,6 +44,6 @@ public class ImageBoardTest
             return;
         }
 
-        Assert.True(board.IsValid());
+        Assert.True(board.IsValid(null));
     }
 }

@@ -45,7 +45,7 @@ static void CreateGame()
         Console.WriteLine();
         board = CreateBoard();
         Console.WriteLine(board);
-        var valid = board.IsValid();
+        var valid = board.IsValid(Console.Error.WriteLine);
         Console.WriteLine();
         if (valid)
             break;
@@ -71,17 +71,29 @@ static void CreateGame()
 
 static Board CreateBoard()
 {
-    var decision = "{0}".AskForDecision(BoardType.Random, BoardType.Custom, BoardType.Seed);
+    var decision = "{0}".AskForDecision(
+        BoardType.Custom,
+        BoardType.Pasted,
+        BoardType.Random,
+        BoardType.Seed
+    );
     switch (decision)
     {
-        case BoardType.Random:
-            Console.WriteLine("Creating random board");
-            Console.WriteLine();
-            return new RandomBoard();
         case BoardType.Custom:
             Console.WriteLine("Creating custom board");
             Console.WriteLine();
             return new CustomBoard();
+        case BoardType.Pasted:
+            Console.WriteLine("Creating board from pasted serialization");
+            Console.WriteLine();
+            var pasted = "Paste the board serialization (as printed by the CLI)".AskForMultiline(
+                text => new PastedBoard(text).IsValid(null)
+            );
+            return new PastedBoard(pasted);
+        case BoardType.Random:
+            Console.WriteLine("Creating random board");
+            Console.WriteLine();
+            return new RandomBoard();
         case BoardType.Seed:
             Console.WriteLine("Creating board from seed");
             Console.WriteLine();
@@ -244,11 +256,14 @@ namespace Solitaire
 
     enum BoardType
     {
-        [Description("Random board")]
-        Random,
-
         [Description("Custom board")]
         Custom,
+
+        [Description("Pasted board")]
+        Pasted,
+
+        [Description("Random board")]
+        Random,
 
         [Description("Seed board")]
         Seed,
